@@ -1,0 +1,14 @@
+{
+  "name": "ciccada-technology",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Ciccada Technology — AI Automation Agency Website",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "build": "node build.cjs"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
