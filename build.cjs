@@ -50,6 +50,11 @@ filesToCopy.forEach(file => {
       if (promoStart !== -1 && promoEnd !== -1) {
         html = html.substring(0, promoStart) + html.substring(promoEnd);
       }
+
+      // Replace title and meta tags
+      html = html.replace(/<title>[^<]*<\/title>/, '<title>Ciccada Tech — Cybersecurity Platform</title>');
+      html = html.replace(/content="Lumora AI[^"]*"/g, 'content="Ciccada Tech — Cybersecurity Platform"');
+      html = html.replace(/Launch a premium AI automation agency website with Lumora AI[^"]*/g, 'Enterprise cybersecurity visibility and detection platform by Ciccada Technology');
       
       fs.writeFileSync(dest, html);
     } else {

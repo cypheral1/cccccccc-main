@@ -3,18 +3,27 @@
 // 1. Text Replacements
 const textReplacements = {
     "Lumora AI": "Ciccada Tech",
+    "LUMORA AI": "CICCADA TECH",
     "Lumora": "Ciccada",
     "AI Automation Agency": "Cybersecurity Platform",
+    "AI Automation Agency Framer Template": "Cybersecurity Platform",
     "BOOK A CALL": "REQUEST DEMO",
     "Book a call": "Request Demo",
     "Automate work in one workflow.": "Your Security Data. Your Control.",
     "The most powerful AI automation agency for teams that are serious about scale. Connect your tools, deploy agents, iterate fast.": "The most powerful visibility and detection engine for SOC teams that are serious about scale. Deploy the pipeline, detect anomalies, iterate fast.",
-    "Trigger: New Lead": "Trigger: Zeek Log Ingest",
-    "Enrich lead data via API": "Flink Stateful Processing",
-    "Score & qualify lead": "Kafka Stream Routing",
+    "Trigger: New Lead": "Trigger: Log Ingest",
+    "Enrich lead data via API": "Stateful Processing",
+    "Score & qualify lead": "Stream Routing",
     "Route to sales team": "Anomaly Scoring",
-    "Log activity to CRM": "Alert to Dashboard"
+    "Log activity to CRM": "Alert to Dashboard",
+    "Design & Developed by Amani": "Ciccada Technology",
+    "Noda Patel": "Sameer Chavan",
+    "AI Consultant & Builder": "Founder & Security Engineer",
+    "THE FOUNDER": "THE FOUNDER"
 };
+
+// Fix browser tab title immediately
+document.title = "Ciccada Tech — Cybersecurity Platform";
 
 function processNode(node) {
     if (node.nodeType === 3) { // Text node
@@ -53,6 +62,14 @@ function purgeUnwanted() {
     document.querySelectorAll('div[style]').forEach(function(el) {
         var z = parseInt(el.style.zIndex);
         if (z > 2147000000) el.remove();
+    });
+
+    // Replace Founder image with Sameer Chavan's photo
+    document.querySelectorAll('img[src*="19VQ8lou0fXJZWptw2sdg9sw"], img[alt="Founder Image"]').forEach(function(img) {
+        if (!img.src.includes('sameer_chavan.png')) {
+            img.src = 'images/sameer_chavan.png';
+            img.removeAttribute('srcset');
+        }
     });
 
     // Remove "Design & Developed by Amani" text
