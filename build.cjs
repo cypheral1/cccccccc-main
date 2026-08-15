@@ -51,10 +51,14 @@ filesToCopy.forEach(file => {
         html = html.substring(0, promoStart) + html.substring(promoEnd);
       }
 
-      // Replace title and meta tags
-      html = html.replace(/<title>[^<]*<\/title>/, '<title>Ciccada Tech — Cybersecurity Platform</title>');
+      // Replace title, meta tags, founder photo, and bio text
+      html = html.replace(/<title>[^<]*<\/title>/g, '<title>Ciccada Tech — Cybersecurity Platform</title>');
       html = html.replace(/content="Lumora AI[^"]*"/g, 'content="Ciccada Tech — Cybersecurity Platform"');
       html = html.replace(/Launch a premium AI automation agency website with Lumora AI[^"]*/g, 'Enterprise cybersecurity visibility and detection platform by Ciccada Technology');
+      html = html.replace(/https:\/\/framerusercontent\.com\/images\/19VQ8lou0fXJZWptw2sdg9sw\.png[^\"]*/g, 'images/sameer_chavan.png');
+      html = html.replace(/8 yrs/g, 'Young Founder');
+      html = html.replace(/Shipping production AI and automation systems/g, 'Building mission-critical cybersecurity systems');
+      html = html.replace(/I've spent the last decade shipping AI inside startups and agencies — long before LLMs were a buzzword\. I work directly with founders, no junior team, no SOW theatre\./g, 'As a young founder and security engineer, I build high-throughput threat detection and real-time security pipelines.');
       
       fs.writeFileSync(dest, html);
     } else {

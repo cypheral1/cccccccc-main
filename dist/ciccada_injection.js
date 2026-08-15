@@ -19,11 +19,67 @@ const textReplacements = {
     "Design & Developed by Amani": "Ciccada Technology",
     "Noda Patel": "Sameer Chavan",
     "AI Consultant & Builder": "Founder & Security Engineer",
-    "THE FOUNDER": "THE FOUNDER"
+    "THE FOUNDER": "THE FOUNDER",
+    "8 yrs": "Young Founder",
+    "Shipping production AI and automation systems": "Building mission-critical cybersecurity systems",
+    "shipping production AI & automation": "Building mission-critical cybersecurity systems",
+    "I've spent the last decade shipping AI inside startups and agencies — long before LLMs were a buzzword. I work directly with founders, no junior team, no SOW theatre.": "As a young founder and security engineer, I build high-throughput threat detection and real-time security pipelines."
 };
 
-// Fix browser tab title immediately
-document.title = "Ciccada Tech — Cybersecurity Platform";
+// Inject alignment styles for founder image
+const founderStyle = document.createElement('style');
+founderStyle.textContent = `
+    .framer-s4z3dm img[alt="BG"] {
+        display: none !important;
+    }
+    .framer-s4z3dm {
+        overflow: hidden !important;
+        position: relative !important;
+    }
+    .framer-napdvs, 
+    .framer-napdvs > div {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+    .framer-napdvs img {
+        object-fit: cover !important;
+        object-position: center top !important;
+        width: 100% !important;
+        height: 108% !important;
+    }
+    .framer-1kwnnws {
+        position: absolute !important;
+        bottom: 24px !important;
+        left: 24px !important;
+        z-index: 10 !important;
+    }
+`;
+if (document.head) {
+    document.head.appendChild(founderStyle);
+} else {
+    document.addEventListener('DOMContentLoaded', () => document.head.appendChild(founderStyle));
+}
+
+// Fix browser tab title permanently (prevent React router from changing it back)
+try {
+    Object.defineProperty(document, 'title', {
+        get: function() {
+            return "Ciccada Tech — Cybersecurity Platform";
+        },
+        set: function(val) {
+            // Block Framer from setting Lumora AI
+            return "Ciccada Tech — Cybersecurity Platform";
+        },
+        configurable: true
+    });
+} catch(e) {
+    document.title = "Ciccada Tech — Cybersecurity Platform";
+}
 
 function processNode(node) {
     if (node.nodeType === 3) { // Text node
