@@ -1,4 +1,4 @@
-// ─── Lumora AI — Site Data ─────────────────────────────────
+// ─── Ciccada Tech — Site Data ─────────────────────────────────
 // All website content is defined here. Change values to update the site.
 
 export const siteData = {

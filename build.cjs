@@ -59,6 +59,10 @@ filesToCopy.forEach(file => {
       html = html.replace(/8 yrs/g, 'Young Founder');
       html = html.replace(/Shipping production AI and automation systems/g, 'Building mission-critical cybersecurity systems');
       html = html.replace(/I've spent the last decade shipping AI inside startups and agencies — long before LLMs were a buzzword\. I work directly with founders, no junior team, no SOW theatre\./g, 'As a young founder and security engineer, I build high-throughput threat detection and real-time security pipelines.');
+      html = html.replace(/LUMORA AI/g, 'CICCADA TECH');
+      html = html.replace(/Lumora AI/g, 'Ciccada Tech');
+      html = html.replace(/LUMORA/g, 'CICCADA');
+      html = html.replace(/Lumora/g, 'Ciccada');
       
       fs.writeFileSync(dest, html);
     } else {

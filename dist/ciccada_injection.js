@@ -84,6 +84,7 @@ try {
 function processNode(node) {
     if (node.nodeType === 3) { // Text node
         let text = node.nodeValue;
+        if (!text) return;
         let modified = false;
         
         for (const [key, value] of Object.entries(textReplacements)) {
@@ -92,6 +93,20 @@ function processNode(node) {
                 modified = true;
             }
         }
+
+        if (/lumora\s*ai/gi.test(text)) {
+            text = text.replace(/lumora\s*ai/gi, (match) => {
+                return match === match.toUpperCase() ? "CICCADA TECH" : "Ciccada Tech";
+            });
+            modified = true;
+        }
+
+        if (/lumora/gi.test(text)) {
+            text = text.replace(/lumora/gi, (match) => {
+                return match === match.toUpperCase() ? "CICCADA" : "Ciccada";
+            });
+            modified = true;
+        }
         
         if (modified) {
             node.nodeValue = text;
@@ -99,6 +114,16 @@ function processNode(node) {
     } else if (node.nodeType === 1) { // Element node
         if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE') return;
         
+        ['alt', 'title', 'aria-label', 'placeholder'].forEach(attr => {
+            if (node.hasAttribute && node.hasAttribute(attr)) {
+                let val = node.getAttribute(attr);
+                if (/lumora/gi.test(val)) {
+                    val = val.replace(/lumora\s*ai/gi, 'Ciccada Tech').replace(/lumora/gi, 'Ciccada');
+                    node.setAttribute(attr, val);
+                }
+            }
+        });
+
         node.childNodes.forEach(processNode);
     }
 }
@@ -128,12 +153,11 @@ function purgeUnwanted() {
         }
     });
 
-    // Remove "Design & Developed by Amani" text
+    // Remove "Design & Developed by Amani" text and sanitize any missed Lumora text
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     while (walker.nextNode()) {
         var node = walker.currentNode;
         if (node.nodeValue && node.nodeValue.includes('Amani')) {
-            // Walk up to find the containing row/block and hide it
             var parent = node.parentElement;
             while (parent && parent !== document.body) {
                 var text = parent.textContent || '';
@@ -143,6 +167,14 @@ function purgeUnwanted() {
                 }
                 parent = parent.parentElement;
             }
+        }
+
+        if (node.nodeValue && /lumora/gi.test(node.nodeValue)) {
+            node.nodeValue = node.nodeValue
+                .replace(/LUMORA AI/g, 'CICCADA TECH')
+                .replace(/Lumora AI/gi, 'Ciccada Tech')
+                .replace(/LUMORA/g, 'CICCADA')
+                .replace(/Lumora/gi, 'Ciccada');
         }
     }
 }
