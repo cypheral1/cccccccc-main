@@ -1,5 +1,26 @@
 // Ciccada Tech - Dynamic Injection Script
 
+// 0. Intercept 2D Canvas text rendering for the LED Matrix Text component
+(function() {
+    try {
+        var origFillText = CanvasRenderingContext2D.prototype.fillText;
+        CanvasRenderingContext2D.prototype.fillText = function(text, x, y, max) {
+            if (typeof text === 'string' && text.includes('LUMORA AI')) {
+                text = text.replace(/LUMORA AI/g, 'CICCADA TECH');
+            }
+            return origFillText.apply(this, arguments.length > 3 ? [text, x, y, max] : [text, x, y]);
+        };
+
+        var origMeasureText = CanvasRenderingContext2D.prototype.measureText;
+        CanvasRenderingContext2D.prototype.measureText = function(text) {
+            if (typeof text === 'string' && text.includes('LUMORA AI')) {
+                text = text.replace(/LUMORA AI/g, 'CICCADA TECH');
+            }
+            return origMeasureText.apply(this, [text]);
+        };
+    } catch(e) {}
+})();
+
 // 1. Text Replacements
 const textReplacements = {
     "Lumora AI": "Ciccada Tech",
@@ -57,6 +78,28 @@ founderStyle.textContent = `
         bottom: 24px !important;
         left: 24px !important;
         z-index: 10 !important;
+    }
+    .framer-1qymy5r {
+        width: 120px !important;
+        height: 22px !important;
+        overflow: visible !important;
+    }
+    .framer-1m0358u-container {
+        width: 120px !important;
+        height: 22px !important;
+        overflow: visible !important;
+    }
+    .framer-s0n0kj {
+        width: auto !important;
+        overflow: visible !important;
+    }
+    img[src*="ciccada_logo"], img[src*="iecljx2VuDSHgMWYnaVAorc4"], .framer-1qymy5r img {
+        width: 120px !important;
+        height: 22px !important;
+        max-width: 120px !important;
+        max-height: 22px !important;
+        object-fit: contain !important;
+        display: block !important;
     }
 `;
 if (document.head) {
@@ -150,6 +193,14 @@ function purgeUnwanted() {
     document.querySelectorAll('img[src*="19VQ8lou0fXJZWptw2sdg9sw"], img[alt="Founder Image"]').forEach(function(img) {
         if (!img.src.includes('sameer_chavan.png')) {
             img.src = 'images/sameer_chavan.png';
+            img.removeAttribute('srcset');
+        }
+    });
+
+    // Replace Lumora Logo SVG with Ciccada Tech Logo SVG
+    document.querySelectorAll('img[src*="iecljx2VuDSHgMWYnaVAorc4"], .framer-s0n0kj img').forEach(function(img) {
+        if (!img.src.includes('ciccada_logo.svg')) {
+            img.src = 'images/ciccada_logo.svg';
             img.removeAttribute('srcset');
         }
     });

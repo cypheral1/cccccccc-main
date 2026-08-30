@@ -14,8 +14,8 @@ export const siteData = {
   // ── NAVBAR ────────────────────────────────────────────────
   navbar: {
     logo: {
-      svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-      text: 'Ciccada Technology',
+      image: '/images/ciccada_logo.svg',
+      text: 'Ciccada - Tech',
     },
     links: [
       { label: 'Services', href: '#services' },
@@ -226,8 +226,8 @@ export const siteData = {
   // ── FOOTER ────────────────────────────────────────────────
   footer: {
     logo: {
-      svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-      text: 'Ciccada Technology',
+      image: '/images/ciccada_logo.svg',
+      text: 'Ciccada - Tech',
     },
     tagline: 'AI-powered automation for modern teams.',
     columns: [
