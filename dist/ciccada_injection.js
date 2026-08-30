@@ -102,27 +102,80 @@ founderStyle.textContent = `
         display: block !important;
     }
 
-    /* ── Mobile Responsive Styles ─────────────────── */
+    /* ── Global Mobile Responsive Alignment Rules ─────────────────── */
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+        position: relative !important;
+    }
+
     @media (max-width: 768px) {
-        #cc-terminal-card {
-            width: calc(100% - 24px) !important;
-            padding: 18px 16px 20px !important;
-            min-height: 250px !important;
-            font-size: 11px !important;
+        /* Mobile Navbar Alignment */
+        nav.framer-YTJB9, nav[data-framer-name*="Phone"], nav[data-framer-name*="Tablet"] {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            max-width: 100vw !important;
         }
-        #cc-term-body .cc-tline {
-            min-height: 22px !important;
-            line-height: 22px !important;
-            font-size: 11px !important;
+        .framer-eqt4fj {
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
-        .cct-key {
-            width: 125px !important;
+        .framer-1qymy5r, .framer-1m0358u-container {
+            width: 110px !important;
+            height: 20px !important;
+        }
+        img[src*="ciccada_logo"], img[src*="iecljx2VuDSHgMWYnaVAorc4"] {
+            width: 110px !important;
+            height: 20px !important;
+            max-width: 110px !important;
+            max-height: 20px !important;
+        }
+
+        /* Hero & Stats Alignment */
+        .framer-dPdoq {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        /* Founder Card Mobile Fit */
+        .framer-s4z3dm {
+            min-height: 380px !important;
+            border-radius: 12px !important;
+            max-width: calc(100vw - 32px) !important;
+            margin: 0 auto !important;
+        }
+        .framer-napdvs img {
+            object-fit: cover !important;
+            object-position: center 15% !important;
         }
         .framer-1kwnnws {
-            position: relative !important;
-            bottom: auto !important;
-            left: auto !important;
-            margin-top: 16px !important;
+            position: absolute !important;
+            bottom: 16px !important;
+            left: 16px !important;
+            z-index: 10 !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            background: rgba(0, 0, 0, 0.65) !important;
+            padding: 10px 14px !important;
+            border-radius: 8px !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Problem Section Container */
+        .framer-6g49ir, [data-framer-name="Bottom Content"] {
+            width: 100% !important;
+            max-width: 100vw !important;
+            box-sizing: border-box !important;
+            padding: 0 !important;
+        }
+
+        /* Footer Alignment */
+        footer, .framer-1tafs22, [data-framer-name="Shape Container"] {
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
         }
     }
 `;
@@ -365,6 +418,43 @@ if (document.readyState === 'loading') {
         '  vertical-align: middle !important;',
         '  margin-left: 2px !important;',
         '  animation: ccBlink 1s step-end infinite !important;',
+        '}',
+        '@media (max-width: 768px) {',
+        '  #' + TERMINAL_ID + ' { padding: 20px 0 40px !important; }',
+        '  #cc-terminal-card {',
+        '    width: calc(100% - 32px) !important;',
+        '    max-width: calc(100% - 32px) !important;',
+        '    padding: 20px 18px 24px !important;',
+        '    min-height: 260px !important;',
+        '    font-size: 11.5px !important;',
+        '    line-height: 1.75 !important;',
+        '    border-radius: 10px !important;',
+        '  }',
+        '  #cc-term-body .cc-tline {',
+        '    min-height: 22px !important;',
+        '    line-height: 22px !important;',
+        '    font-size: 11.5px !important;',
+        '  }',
+        '  .cct-key { width: 120px !important; font-size: 11.5px !important; }',
+        '  .cct-val, .cct-cmd, .cct-prompt, .cct-ok-icon, .cct-ok-text { font-size: 11.5px !important; }',
+        '  .cct-cmt, .cct-cmt-val { font-size: 11px !important; }',
+        '}',
+        '@media (max-width: 480px) {',
+        '  #cc-terminal-card {',
+        '    width: calc(100% - 20px) !important;',
+        '    max-width: calc(100% - 20px) !important;',
+        '    padding: 16px 14px 20px !important;',
+        '    font-size: 10.5px !important;',
+        '    line-height: 1.7 !important;',
+        '  }',
+        '  #cc-term-body .cc-tline {',
+        '    min-height: 20px !important;',
+        '    line-height: 20px !important;',
+        '    font-size: 10.5px !important;',
+        '  }',
+        '  .cct-key { width: 105px !important; font-size: 10.5px !important; }',
+        '  .cct-val, .cct-cmd, .cct-prompt, .cct-ok-icon, .cct-ok-text { font-size: 10.5px !important; }',
+        '  .cct-cmt, .cct-cmt-val { font-size: 10px !important; }',
         '}'
     ].join('\n');
     
