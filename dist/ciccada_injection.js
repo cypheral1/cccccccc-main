@@ -101,6 +101,30 @@ founderStyle.textContent = `
         object-fit: contain !important;
         display: block !important;
     }
+
+    /* ── Mobile Responsive Styles ─────────────────── */
+    @media (max-width: 768px) {
+        #cc-terminal-card {
+            width: calc(100% - 24px) !important;
+            padding: 18px 16px 20px !important;
+            min-height: 250px !important;
+            font-size: 11px !important;
+        }
+        #cc-term-body .cc-tline {
+            min-height: 22px !important;
+            line-height: 22px !important;
+            font-size: 11px !important;
+        }
+        .cct-key {
+            width: 125px !important;
+        }
+        .framer-1kwnnws {
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            margin-top: 16px !important;
+        }
+    }
 `;
 if (document.head) {
     document.head.appendChild(founderStyle);
@@ -197,9 +221,9 @@ function purgeUnwanted() {
         }
     });
 
-    // Replace Lumora Logo SVG with Ciccada Tech Logo SVG
-    document.querySelectorAll('img[src*="iecljx2VuDSHgMWYnaVAorc4"], .framer-s0n0kj img').forEach(function(img) {
-        if (!img.src.includes('ciccada_logo.svg')) {
+    // Replace Lumora Logo SVG with Ciccada Tech Logo SVG (including mobile navs)
+    document.querySelectorAll('img[src*="iecljx2VuDSHgMWYnaVAorc4"], .framer-s0n0kj img, nav img[src*="svg"]').forEach(function(img) {
+        if (!img.src.includes('ciccada_logo.svg') && (img.src.includes('iecljx2VuDSHgMWYnaVAorc4') || img.closest('.framer-s0n0kj') || img.closest('nav'))) {
             img.src = 'images/ciccada_logo.svg';
             img.removeAttribute('srcset');
         }
