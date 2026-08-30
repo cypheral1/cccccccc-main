@@ -5,7 +5,7 @@
   "description": "Ciccada Technology — AI Automation Agency Website",
   "type": "module",
   "scripts": {
-    "dev": "npx serve . -p 3000",
+    "dev": "npx serve . -p 4000",
     "build": "node build.cjs"
   },
   "devDependencies": {

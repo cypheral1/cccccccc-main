@@ -113,6 +113,7 @@ function processNode(node) {
         }
     } else if (node.nodeType === 1) { // Element node
         if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE') return;
+        if (node.id === 'cc-terminal-wrap' || (node.closest && node.closest('#cc-terminal-wrap'))) return;
         
         ['alt', 'title', 'aria-label', 'placeholder'].forEach(attr => {
             if (node.hasAttribute && node.hasAttribute(attr)) {
@@ -210,3 +211,253 @@ if (document.readyState === 'loading') {
 } else {
     initObserver();
 }
+
+// ── Terminal Widget Injection (fights Framer re-render) ─────────────────────
+(function() {
+    var TERMINAL_ID = 'cc-terminal-wrap';
+    var isRunning = false;
+
+    // Inject global styles
+    var styleTag = document.createElement('style');
+    styleTag.id = 'cc-terminal-styles';
+    styleTag.textContent = [
+        '@keyframes ccBlink{0%,100%{opacity:1}50%{opacity:0}}',
+        '@keyframes ccGlowPulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:0.9;transform:scale(1.03)}}',
+        '#' + TERMINAL_ID + ' {',
+        '  position: relative !important;',
+        '  display: block !important;',
+        '  width: 100% !important;',
+        '  padding: 50px 0 70px !important;',
+        '  overflow: hidden !important;',
+        '  box-sizing: border-box !important;',
+        '  grid-column: 1 / -1 !important;',
+        '}',
+        '#' + TERMINAL_ID + ' .cc-bg-glow {',
+        '  position: absolute !important;',
+        '  inset: -10% !important;',
+        '  pointer-events: none !important;',
+        '  background: radial-gradient(circle at 35% 45%, rgba(249,86,47,0.32) 0%, rgba(251,177,104,0.18) 30%, rgba(0,0,0,0) 70%) !important;',
+        '  filter: blur(40px) !important;',
+        '  z-index: 0 !important;',
+        '  animation: ccGlowPulse 8s ease-in-out infinite !important;',
+        '}',
+        '#' + TERMINAL_ID + ' .cc-bg-mesh {',
+        '  position: absolute !important;',
+        '  inset: 0 !important;',
+        '  pointer-events: none !important;',
+        '  -webkit-mask: url(https://framerusercontent.com/images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp?scale-down-to=1024&width=675&height=1200) 50%/cover no-repeat !important;',
+        '  mask: url(https://framerusercontent.com/images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp?scale-down-to=1024&width=675&height=1200) 50%/cover no-repeat !important;',
+        '  background: radial-gradient(ellipse at 40% 50%, rgba(251,177,104,0.7) 0%, rgba(249,86,47,0.5) 40%, rgba(0,0,0,0) 75%) !important;',
+        '  opacity: 0.85 !important;',
+        '  z-index: 1 !important;',
+        '}',
+        '#cc-terminal-card {',
+        '  position: relative !important;',
+        '  z-index: 2 !important;',
+        '  margin: 0 auto !important;',
+        '  max-width: 640px !important;',
+        '  width: calc(100% - 48px) !important;',
+        '  background: rgba(8, 8, 8, 0.88) !important;',
+        '  backdrop-filter: blur(16px) !important;',
+        '  -webkit-backdrop-filter: blur(16px) !important;',
+        '  border: 1px solid rgba(255, 255, 255, 0.1) !important;',
+        '  border-radius: 12px !important;',
+        '  padding: 30px 36px 36px !important;',
+        '  box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 30px 80px rgba(0,0,0,0.92) !important;',
+        "  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;",
+        '  font-size: 13.5px !important;',
+        '  line-height: 1.85 !important;',
+        '  min-height: 310px !important;',
+        '  box-sizing: border-box !important;',
+        '}',
+        '#cc-term-body { display: block !important; }',
+        '#cc-term-body .cc-tline { min-height: 26px !important; line-height: 26px !important; white-space: pre !important; font-family: inherit !important; display: block !important; }',
+        '.cct-prompt { color: rgba(255,255,255,0.55) !important; font-family: inherit !important; }',
+        '.cct-cmd { color: #ffffff !important; font-weight: 500 !important; font-family: inherit !important; }',
+        '.cct-arrow { color: rgba(255,255,255,0.35) !important; font-family: inherit !important; }',
+        '.cct-key { color: #fbb168 !important; font-weight: 600 !important; display: inline-block !important; width: 175px !important; font-family: inherit !important; }',
+        '.cct-val { color: #f9562f !important; font-family: inherit !important; }',
+        '.cct-cmt { color: rgba(255,255,255,0.42) !important; font-family: inherit !important; }',
+        '.cct-cmt-val { color: rgba(255,255,255,0.85) !important; font-family: inherit !important; }',
+        '.cct-ok-icon { color: #4ade80 !important; font-family: inherit !important; }',
+        '.cct-ok-text { color: #4ade80 !important; font-family: inherit !important; }',
+        '.cct-dim { color: rgba(255,255,255,0.3) !important; font-family: inherit !important; }',
+        '#cc-term-cursor {',
+        '  display: inline-block !important;',
+        '  width: 8px !important;',
+        '  height: 15px !important;',
+        '  background: rgba(255,255,255,0.85) !important;',
+        '  vertical-align: middle !important;',
+        '  margin-left: 2px !important;',
+        '  animation: ccBlink 1s step-end infinite !important;',
+        '}'
+    ].join('\n');
+    
+    if (document.head) {
+        document.head.appendChild(styleTag);
+    } else {
+        document.addEventListener('DOMContentLoaded', function() { document.head.appendChild(styleTag); });
+    }
+
+    function buildTerminal() {
+        var wrap = document.createElement('div');
+        wrap.id = TERMINAL_ID;
+        wrap.innerHTML = [
+            '<div class="cc-bg-glow"></div>',
+            '<div class="cc-bg-mesh"></div>',
+            '<div id="cc-terminal-card">',
+            '  <div style="display:flex;gap:7px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);">',
+            '    <span style="width:10px;height:10px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>',
+            '    <span style="width:10px;height:10px;border-radius:50%;background:#febc2e;display:inline-block;"></span>',
+            '    <span style="width:10px;height:10px;border-radius:50%;background:#28c840;display:inline-block;"></span>',
+            '    <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.05em;">bash — ciccada-diag</span>',
+            '  </div>',
+            '  <div id="cc-term-body"></div>',
+            '  <span id="cc-term-cursor"></span>',
+            '</div>'
+        ].join('');
+        return wrap;
+    }
+
+    var SCRIPT = [
+        { segs: [{ t: '$ ', c: 'cct-prompt' }, { t: 'system.diagnose()', c: 'cct-cmd' }], pause: 700 },
+        { segs: [{ t: '→ ', c: 'cct-arrow' }, { t: 'manual_handoffs', c: 'cct-key' }, { t: ': ', c: 'cct-dim' }, { t: '62% automatable', c: 'cct-val' }], pause: 280 },
+        { segs: [{ t: '→ ', c: 'cct-arrow' }, { t: 'data_silos', c: 'cct-key' }, { t: ': ', c: 'cct-dim' }, { t: '48% automatable', c: 'cct-val' }], pause: 280 },
+        { segs: [{ t: '→ ', c: 'cct-arrow' }, { t: 'ops_bottleneck', c: 'cct-key' }, { t: ': ', c: 'cct-dim' }, { t: '71% automatable', c: 'cct-val' }], pause: 450 },
+        { segs: [{ t: '// estimated savings: ', c: 'cct-cmt' }, { t: '$240k/yr', c: 'cct-cmt-val' }], pause: 900 },
+        { segs: [], pause: 300 },
+        { segs: [{ t: '$ ', c: 'cct-prompt' }, { t: 'deploy --target=production', c: 'cct-cmd' }], pause: 800 },
+        { segs: [{ t: '✓ ', c: 'cct-ok-icon' }, { t: '7 workflows live', c: 'cct-ok-text' }], pause: 3000 }
+    ];
+
+    function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    var hasCompleted = false;
+
+    async function runTerminal() {
+        if (isRunning || hasCompleted) return;
+        isRunning = true;
+
+        var body = document.getElementById('cc-term-body');
+        var cursor = document.getElementById('cc-term-cursor');
+        
+        if (!body || !cursor) {
+            await sleep(100);
+            body = document.getElementById('cc-term-body');
+            cursor = document.getElementById('cc-term-cursor');
+            if (!body || !cursor) {
+                isRunning = false;
+                return;
+            }
+        }
+
+        body.innerHTML = '';
+        body.appendChild(cursor);
+
+        for (var i = 0; i < SCRIPT.length; i++) {
+            body = document.getElementById('cc-term-body');
+            cursor = document.getElementById('cc-term-cursor');
+            if (!body || !cursor) break;
+
+            var item = SCRIPT[i];
+            var lineEl = document.createElement('div');
+            lineEl.className = 'cc-tline';
+            lineEl.style.cssText = 'min-height:24px;line-height:24px;display:block;margin-bottom:3px;';
+            
+            body.insertBefore(lineEl, cursor);
+
+            if (item.segs && item.segs.length > 0) {
+                for (var s = 0; s < item.segs.length; s++) {
+                    body = document.getElementById('cc-term-body');
+                    if (!body) break;
+
+                    var seg = item.segs[s];
+                    var span = document.createElement('span');
+                    span.className = seg.c;
+                    lineEl.appendChild(span);
+
+                    var str = seg.t;
+                    for (var c = 0; c < str.length; c++) {
+                        span.textContent += str[c];
+                        await sleep(28);
+                    }
+                }
+            }
+            await sleep(item.pause);
+        }
+
+        hasCompleted = true;
+        isRunning = false;
+    }
+
+    function injectTerminal() {
+        var headers = document.querySelectorAll('h2');
+        var problemHeader = null;
+        for (var h = 0; h < headers.length; h++) {
+            if (headers[h].textContent && headers[h].textContent.includes('Manual handoffs slow teams down')) {
+                problemHeader = headers[h];
+                break;
+            }
+        }
+
+        var bottomContent = null;
+        if (problemHeader) {
+            var current = problemHeader.parentElement;
+            while (current && current !== document.body) {
+                var found = current.querySelector('[data-framer-name="Bottom Content"]') || current.querySelector('.framer-6g49ir');
+                if (found) {
+                    bottomContent = found;
+                    break;
+                }
+                current = current.parentElement;
+            }
+        }
+
+        if (!bottomContent) {
+            bottomContent = document.querySelector('[data-framer-name="Bottom Content"]');
+        }
+
+        if (!bottomContent) return;
+
+        bottomContent.style.setProperty('display', 'block', 'important');
+        bottomContent.style.setProperty('height', 'auto', 'important');
+        bottomContent.style.setProperty('min-height', '320px', 'important');
+        bottomContent.style.setProperty('overflow', 'visible', 'important');
+
+        // Hide all native Framer children
+        Array.prototype.forEach.call(bottomContent.children, function(child) {
+            if (child.id !== TERMINAL_ID && child.id !== 'ciccada-terminal') {
+                child.style.setProperty('display', 'none', 'important');
+            }
+        });
+
+        var oldStatic = document.getElementById('ciccada-terminal');
+        if (oldStatic) {
+            oldStatic.style.setProperty('display', 'none', 'important');
+        }
+
+        var terminal = document.getElementById(TERMINAL_ID);
+        if (!terminal || !bottomContent.contains(terminal)) {
+            if (terminal && terminal.parentNode) {
+                terminal.parentNode.removeChild(terminal);
+            }
+            terminal = buildTerminal();
+            bottomContent.appendChild(terminal);
+            isRunning = false;
+        }
+
+        terminal.style.setProperty('display', 'block', 'important');
+
+        if (!isRunning) {
+            runTerminal();
+        }
+    }
+
+    setInterval(injectTerminal, 300);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectTerminal);
+    } else {
+        injectTerminal();
+    }
+})();
+

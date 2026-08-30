@@ -89,16 +89,14 @@ function renderApp() {
           <h2 class="text-h2">${siteData.problem.heading}</h2>
         </div>
         
-        <div class="problem-cards reveal reveal-delay-1">
-          ${siteData.problem.cards.map((card, i) => `
-            <div class="problem-card">
-              <div class="problem-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              </div>
-              <h3 class="problem-card-title">${card.title}</h3>
-              <p class="problem-card-desc">${card.description}</p>
+        <div class="terminal-widget-wrap reveal reveal-delay-1">
+          <div class="terminal-bg-dots"></div>
+          <div class="terminal-card" id="terminal-card">
+            <div class="terminal-body" id="terminal-body">
+              <div class="terminal-line" id="tl-0"></div>
             </div>
-          `).join('')}
+            <div class="terminal-cursor" id="terminal-cursor"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -355,6 +353,93 @@ function initInteractions() {
   }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
   revealElements.forEach(el => revealObserver.observe(el));
+
+  // ── Terminal Typewriter Animation ─────────────────────────
+  (function initTerminal() {
+    const body   = document.getElementById('terminal-body');
+    const cursor = document.getElementById('terminal-cursor');
+    const wrap   = document.querySelector('.terminal-widget-wrap');
+    if (!body || !cursor || !wrap) return;
+
+    // Script: array of line descriptors
+    // Each line = array of { text, cls } segments
+    const SCRIPT = [
+      { segs: [{ text: '$ ', cls: 'tc-prompt' }, { text: 'system.diagnose()', cls: 'tc-cmd' }], pause: 600 },
+      { segs: [{ text: '→ ', cls: 'tc-arrow' }, { text: 'sales', cls: 'tc-key' }, { text: ': ', cls: 'tc-dim' }, { text: '62% automatable', cls: 'tc-val' }], pause: 250 },
+      { segs: [{ text: '→ ', cls: 'tc-arrow' }, { text: 'support', cls: 'tc-key' }, { text: ': ', cls: 'tc-dim' }, { text: '48% automatable', cls: 'tc-val' }], pause: 250 },
+      { segs: [{ text: '→ ', cls: 'tc-arrow' }, { text: 'ops', cls: 'tc-key' }, { text: ': ', cls: 'tc-dim' }, { text: '71% automatable', cls: 'tc-val' }], pause: 400 },
+      { segs: [{ text: '// estimated savings: ', cls: 'tc-comment' }, { text: '$240k/yr', cls: 'tc-cmd' }], pause: 900 },
+      { segs: [], pause: 300 },  // blank line
+      { segs: [{ text: '$ ', cls: 'tc-prompt' }, { text: 'deploy --target=production', cls: 'tc-cmd' }], pause: 800 },
+      { segs: [{ text: '✓ ', cls: 'tc-success' }, { text: '7 workflows live', cls: 'tc-success' }], pause: 2400 },
+    ];
+
+    const CHAR_DELAY  = 38;   // ms per character
+    const RESET_PAUSE = 1200; // pause before restart
+
+    let started = false;
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    function buildLineEl(segs) {
+      const el = document.createElement('div');
+      el.className = 'terminal-line';
+      segs.forEach(({ text, cls }) => {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.textContent = '';
+        el.appendChild(span);
+      });
+      return el;
+    }
+
+    async function typeLine(lineEl, segs) {
+      const spans = lineEl.querySelectorAll('span');
+      for (let s = 0; s < segs.length; s++) {
+        const text = segs[s].text;
+        for (let c = 0; c < text.length; c++) {
+          spans[s].textContent += text[c];
+          // move cursor after the line
+          lineEl.parentElement && lineEl.after(cursor);
+          await sleep(CHAR_DELAY);
+        }
+      }
+    }
+
+    async function runScript() {
+      body.innerHTML = '';
+      body.appendChild(cursor);
+
+      for (let i = 0; i < SCRIPT.length; i++) {
+        const { segs, pause } = SCRIPT[i];
+        const lineEl = buildLineEl(segs);
+        body.insertBefore(lineEl, cursor);
+        if (segs.length > 0) {
+          await typeLine(lineEl, segs);
+        }
+        await sleep(pause);
+      }
+
+      // Move cursor to after last line
+      body.appendChild(cursor);
+      await sleep(RESET_PAUSE);
+      requestAnimationFrame(runScript);
+    }
+
+    // Start animation when widget enters viewport
+    const termObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          runScript();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    termObserver.observe(wrap);
+  })();
 }
 
 // Initial Render
