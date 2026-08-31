@@ -39,12 +39,15 @@ const textReplacements = {
     "Log activity to CRM": "Alert to Dashboard",
     "Design & Developed by Amani": "Ciccada Technology",
     "Noda Patel": "Sameer Chavan",
-    "AI Consultant & Builder": "Founder & Security Engineer",
+    "AI Consultant & Builder": "AI Machine Learning Engineer",
+    "AI Consultant &amp; Builder": "AI Machine Learning Engineer",
+    "Founder & Security Engineer": "AI Machine Learning Engineer",
+    "Founder &amp; Security Engineer": "AI Machine Learning Engineer",
     "THE FOUNDER": "THE FOUNDER",
     "8 yrs": "Young Founder",
-    "Shipping production AI and automation systems": "Building mission-critical cybersecurity systems",
-    "shipping production AI & automation": "Building mission-critical cybersecurity systems",
-    "I've spent the last decade shipping AI inside startups and agencies — long before LLMs were a buzzword. I work directly with founders, no junior team, no SOW theatre.": "As a young founder and security engineer, I build high-throughput threat detection and real-time security pipelines."
+    "Shipping production AI and automation systems": "Building scalable AI and Machine Learning systems",
+    "shipping production AI & automation": "Building scalable AI & Machine Learning systems",
+    "I've spent the last decade shipping AI inside startups and agencies — long before LLMs were a buzzword. I work directly with founders, no junior team, no SOW theatre.": "As an AI & Machine Learning Engineer, I design and deploy intelligent models, automated pipelines, and mission-critical systems."
 };
 
 // Inject alignment styles for founder image
