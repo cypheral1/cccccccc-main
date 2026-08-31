@@ -102,12 +102,46 @@ founderStyle.textContent = `
         display: block !important;
     }
 
-    /* ── Global Mobile Responsive Alignment Rules ─────────────────── */
-    html, body {
-        overflow-x: hidden !important;
-        max-width: 100vw !important;
-        width: 100% !important;
-        position: relative !important;
+    /* ── Global Blue Transformation for Framer ────────────────────────── */
+    :root {
+        --token-orange: #2563EB !important;
+        --token-amber: #60A5FA !important;
+    }
+
+    /* Override all orange step gradients and highlight bars */
+    .framer-1tdi41u, .framer-iur9z8, .framer-g07qag, .framer-1gle67d,
+    .framer-36olyh, .framer-l9t8ym, .framer-ncywgb, .framer-1slimfg {
+        background: linear-gradient(180deg, rgb(96, 165, 250) 0%, rgb(37, 99, 235) 100%) !important;
+    }
+
+    /* Active Highlight States and Tabs */
+    [data-highlight="true"], .framer-8i5hD[data-highlight="true"], .framer-v-1hkce0l {
+        border-color: #2563EB !important;
+    }
+
+    /* Diagram icon container (Lightning bolt, etc.) */
+    .framer-6feuc8, [data-framer-name="Icon"] .framer-S2zg3 {
+        background-color: #2563EB !important;
+    }
+
+    /* Active pills and badges */
+    .framer-xh01ze-container p, .framer-12sqsfe-container p {
+        color: #60A5FA !important;
+    }
+
+    /* Halftone mesh background filter */
+    .cc-bg-mesh, .cc-hero-mesh-bg, .cc-terminal-bg-mesh, .ct-header-mesh-bg, .ct-workflow-mesh {
+        filter: hue-rotate(195deg) saturate(2.5) brightness(1.2) !important;
+    }
+
+    /* Canvas shaders / particle effects */
+    [data-framer-component-type="Shader"] canvas {
+        filter: hue-rotate(195deg) saturate(2.5) brightness(1.2) !important;
+    }
+
+    /* Secondary action buttons */
+    a.framer-uv0sB, .framer-v-tt64wm {
+        background: linear-gradient(90deg, rgb(96, 165, 250) 0%, rgb(37, 99, 235) 100%) !important;
     }
 
     @media (max-width: 768px) {
@@ -332,6 +366,106 @@ function purgeUnwanted() {
                 .replace(/Lumora/gi, 'Ciccada');
         }
     }
+
+    // Comprehensive Orange to Blue runtime re-theming for all Framer SVG, inline styles, and canvas
+    recolorOrangeElements(document.body);
+}
+
+function isOrangeColorStr(str) {
+    if (!str || typeof str !== 'string') return false;
+    if (/#(f9562f|fbb168|ff6b35|fa5730|fcb168|ff7a45|ea580c|f97316|ff5f57|f956|fbb1)/i.test(str)) return true;
+    var match = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (match) {
+        var r = parseInt(match[1], 10);
+        var g = parseInt(match[2], 10);
+        var b = parseInt(match[3], 10);
+        if (r >= 200 && g >= 35 && g <= 210 && b < 160) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function recolorOrangeElements(root) {
+    if (!root) return;
+
+    // 1. Sanitize all SVG linearGradient stops
+    var stops = root.querySelectorAll ? root.querySelectorAll('stop') : [];
+    for (var s = 0; s < stops.length; s++) {
+        var stop = stops[s];
+        var sc = stop.getAttribute('stop-color') || stop.style.stopColor;
+        if (isOrangeColorStr(sc) || (sc && (sc.includes('252,') || sc.includes('251,') || sc.includes('249,') || sc.includes('250,')))) {
+            var offset = stop.getAttribute('offset') || '0';
+            if (offset === '0' || offset === '0%' || parseFloat(offset) < 0.5) {
+                stop.setAttribute('stop-color', 'rgb(96, 165, 250)');
+                stop.style.stopColor = 'rgb(96, 165, 250)';
+            } else {
+                stop.setAttribute('stop-color', 'rgb(37, 99, 235)');
+                stop.style.stopColor = 'rgb(37, 99, 235)';
+            }
+        }
+    }
+
+    // 2. Sanitize all elements in DOM
+    var elements = root.querySelectorAll ? root.querySelectorAll('*') : [];
+    for (var i = 0; i < elements.length; i++) {
+        var el = elements[i];
+        if (!el || !el.getAttribute) continue;
+
+        // Check style attribute string
+        var style = el.getAttribute('style');
+        if (style && isOrangeColorStr(style)) {
+            var newStyle = style
+                .replace(/rgb\(252,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
+                .replace(/rgb\(251,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
+                .replace(/rgb\(249,\s*86,\s*47\)/g, 'rgb(37, 99, 235)')
+                .replace(/rgb\(250,\s*87,\s*48\)/g, 'rgb(37, 99, 235)')
+                .replace(/rgb\(255,\s*107,\s*53\)/g, 'rgb(37, 99, 235)')
+                .replace(/rgba\(252,\s*177,\s*104/g, 'rgba(96, 165, 250')
+                .replace(/rgba\(251,\s*177,\s*104/g, 'rgba(96, 165, 250')
+                .replace(/rgba\(249,\s*86,\s*47/g, 'rgba(37, 99, 235')
+                .replace(/rgba\(250,\s*87,\s*48/g, 'rgba(37, 99, 235')
+                .replace(/rgba\(255,\s*107,\s*53/g, 'rgba(37, 99, 235')
+                .replace(/#f9562f/gi, '#2563EB')
+                .replace(/#fbb168/gi, '#60A5FA')
+                .replace(/#ff6b35/gi, '#2563EB');
+            el.setAttribute('style', newStyle);
+        }
+
+        // Check SVG attributes
+        ['fill', 'stroke', 'color'].forEach(function(attr) {
+            if (el.hasAttribute(attr)) {
+                var val = el.getAttribute(attr);
+                if (isOrangeColorStr(val)) {
+                    var newVal = val
+                        .replace(/rgb\(252,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
+                        .replace(/rgb\(251,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
+                        .replace(/rgb\(249,\s*86,\s*47\)/g, 'rgb(37, 99, 235)')
+                        .replace(/rgb\(250,\s*87,\s*48\)/g, 'rgb(37, 99, 235)')
+                        .replace(/#f9562f/gi, '#2563EB')
+                        .replace(/#fbb168/gi, '#60A5FA')
+                        .replace(/#ff6b35/gi, '#2563EB');
+                    el.setAttribute(attr, newVal);
+                }
+            }
+        });
+
+        // Check computed styles for active text, badges, dots
+        if (el.tagName === 'P' || el.tagName === 'SPAN' || el.tagName === 'DIV' || el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3') {
+            try {
+                var comp = window.getComputedStyle(el);
+                if (comp && isOrangeColorStr(comp.color)) {
+                    el.style.setProperty('color', '#60A5FA', 'important');
+                }
+                if (comp && isOrangeColorStr(comp.backgroundColor)) {
+                    el.style.setProperty('background-color', '#2563EB', 'important');
+                }
+                if (comp && isOrangeColorStr(comp.borderColor)) {
+                    el.style.setProperty('border-color', '#2563EB', 'important');
+                }
+            } catch(e) {}
+        }
+    }
 }
 
 function initObserver() {
@@ -356,8 +490,8 @@ function initObserver() {
     processNode(document.body);
     purgeUnwanted();
 
-    // Continuous polling fallback for late-injected elements
-    setInterval(purgeUnwanted, 500);
+    // Fast polling fallback for dynamic Framer component transitions
+    setInterval(purgeUnwanted, 150);
 }
 
 if (document.readyState === 'loading') {
