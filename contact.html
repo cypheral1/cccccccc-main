@@ -73,12 +73,11 @@
       min-height: 100%;
       width: 100%;
       height: 100%;
-      transform: translate(-50%, -50%);
-      -webkit-transform: translate(-50%, -50%);
+      transform: translate3d(-50%, -50%, 0);
+      -webkit-transform: translate3d(-50%, -50%, 0);
       object-fit: cover;
       object-position: center center;
       opacity: 0.72;
-      filter: contrast(1.16) brightness(0.95) saturate(1.20);
     }
 
     .ciccada-bg-video-overlay {
@@ -1033,7 +1032,8 @@
     document.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
 
     const particles = [];
-    const count = Math.min(Math.floor(window.innerWidth / 28), 50);
+    const particles = [];
+    const count = Math.min(Math.floor(window.innerWidth / 35), 32);
 
     for (let i = 0; i < count; i++) {
       particles.push({
@@ -1047,8 +1047,17 @@
     }
 
     let last = performance.now();
+    let isContactVisible = !document.hidden;
+    document.addEventListener('visibilitychange', () => {
+      isContactVisible = !document.hidden;
+      if (isContactVisible) {
+        last = performance.now();
+        requestAnimationFrame(render);
+      }
+    });
 
     function render(now) {
+      if (!isContactVisible) return;
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
       ctx.clearRect(0, 0, width, height);
@@ -1062,8 +1071,11 @@
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        const mDist = Math.hypot(mouse.x - p.x, mouse.y - p.y);
-        if (mDist < 140) {
+        const mdx = mouse.x - p.x;
+        const mdy = mouse.y - p.y;
+        const mDistSq = mdx * mdx + mdy * mdy;
+        if (mDistSq < 19600 && mDistSq > 0) { // 140px
+          const mDist = Math.sqrt(mDistSq);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
@@ -1079,8 +1091,11 @@
 
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 100) {
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 10000) { // 100px
+            const dist = Math.sqrt(distSq);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -1092,39 +1107,48 @@
       }
       requestAnimationFrame(render);
     }
+    requestAnimationFrame(render);
 
-    // ── Mouse Parallax on Header & Workflow Meshes ──
+    // ── Mouse Parallax on Header & Workflow Meshes (Idle-optimized) ──
     const ctHeaderMesh = document.querySelector('.ct-header-mesh-bg');
     const ctHeaderGlow = document.querySelector('.ct-header-glow-under');
     const ctMesh = document.querySelector('.ct-workflow-mesh');
     const ctGlow = document.querySelector('.ct-workflow-glow-under');
     let ctTargetX = 0, ctTargetY = 0, ctCurrentX = 0, ctCurrentY = 0;
+    let ctParallaxRunning = false;
 
     window.addEventListener('mousemove', (e) => {
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
-      ctTargetX = (e.clientX - cx) / cx * 18;
-      ctTargetY = (e.clientY - cy) / cy * 18;
-    });
+      ctTargetX = (e.clientX - cx) / cx * 16;
+      ctTargetY = (e.clientY - cy) / cy * 16;
+      if (!ctParallaxRunning) {
+        ctParallaxRunning = true;
+        requestAnimationFrame(animateContactParallax);
+      }
+    }, { passive: true });
 
     function animateContactParallax() {
-      ctCurrentX += (ctTargetX - ctCurrentX) * 0.05;
-      ctCurrentY += (ctTargetY - ctCurrentY) * 0.05;
+      ctCurrentX += (ctTargetX - ctCurrentX) * 0.06;
+      ctCurrentY += (ctTargetY - ctCurrentY) * 0.06;
       if (ctHeaderMesh) {
         ctHeaderMesh.style.transform = `translate3d(${ctCurrentX}px, ${ctCurrentY}px, 0)`;
       }
       if (ctHeaderGlow) {
-        ctHeaderGlow.style.transform = `translate3d(${ctCurrentX * 1.3}px, ${ctCurrentY * 1.3}px, 0)`;
+        ctHeaderGlow.style.transform = `translate3d(${ctCurrentX * 1.2}px, ${ctCurrentY * 1.2}px, 0)`;
       }
       if (ctMesh) {
         ctMesh.style.transform = `translate3d(${ctCurrentX}px, ${ctCurrentY}px, 0)`;
       }
       if (ctGlow) {
-        ctGlow.style.transform = `translate3d(${ctCurrentX * 1.3}px, ${ctCurrentY * 1.3}px, 0)`;
+        ctGlow.style.transform = `translate3d(${ctCurrentX * 1.2}px, ${ctCurrentY * 1.2}px, 0)`;
       }
-      requestAnimationFrame(animateContactParallax);
+      if (Math.abs(ctTargetX - ctCurrentX) > 0.05 || Math.abs(ctTargetY - ctCurrentY) > 0.05) {
+        requestAnimationFrame(animateContactParallax);
+      } else {
+        ctParallaxRunning = false;
+      }
     }
-    animateContactParallax();
 
     // ── Live Workflow Stepper Animation ──
     let ctActiveStep = 3;

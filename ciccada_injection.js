@@ -161,6 +161,7 @@ founderStyle.textContent = `
         background-color: #030303 !important;
         transform: translate3d(0, 0, 0) !important;
         -webkit-transform: translate3d(0, 0, 0) !important;
+        will-change: transform !important;
     }
     #ciccada-global-bg-video {
         position: absolute !important;
@@ -170,12 +171,12 @@ founderStyle.textContent = `
         height: 100% !important;
         min-width: 100% !important;
         min-height: 100% !important;
-        transform: translate(-50%, -50%) !important;
-        -webkit-transform: translate(-50%, -50%) !important;
+        transform: translate3d(-50%, -50%, 0) !important;
+        -webkit-transform: translate3d(-50%, -50%, 0) !important;
         object-fit: cover !important;
         object-position: center center !important;
         opacity: 0.72 !important;
-        filter: contrast(1.16) brightness(0.95) saturate(1.20) !important;
+        will-change: auto !important;
     }
     #ciccada-global-bg-overlay {
         position: absolute !important;
@@ -512,33 +513,26 @@ function isOrangeColorStr(str) {
 function recolorOrangeElements(root) {
     if (!root) return;
 
-    // 1. Sanitize all SVG linearGradient stops
-    var stops = root.querySelectorAll ? root.querySelectorAll('stop') : [];
+    // 1. Sanitize SVG gradient stops
+    var stops = root.querySelectorAll ? root.querySelectorAll('stop[stop-color], stop[style]') : [];
     for (var s = 0; s < stops.length; s++) {
         var stop = stops[s];
         var sc = stop.getAttribute('stop-color') || stop.style.stopColor;
-        if (isOrangeColorStr(sc) || (sc && (sc.includes('252,') || sc.includes('251,') || sc.includes('249,') || sc.includes('250,')))) {
+        if (isOrangeColorStr(sc)) {
             var offset = stop.getAttribute('offset') || '0';
-            if (offset === '0' || offset === '0%' || parseFloat(offset) < 0.5) {
-                stop.setAttribute('stop-color', 'rgb(96, 165, 250)');
-                stop.style.stopColor = 'rgb(96, 165, 250)';
-            } else {
-                stop.setAttribute('stop-color', 'rgb(37, 99, 235)');
-                stop.style.stopColor = 'rgb(37, 99, 235)';
-            }
+            var col = (offset === '0' || offset === '0%' || parseFloat(offset) < 0.5) ? 'rgb(96, 165, 250)' : 'rgb(37, 99, 235)';
+            stop.setAttribute('stop-color', col);
+            stop.style.stopColor = col;
         }
     }
 
-    // 2. Sanitize all elements in DOM
-    var elements = root.querySelectorAll ? root.querySelectorAll('*') : [];
-    for (var i = 0; i < elements.length; i++) {
-        var el = elements[i];
-        if (!el || !el.getAttribute) continue;
-
-        // Check style attribute string
-        var style = el.getAttribute('style');
-        if (style && isOrangeColorStr(style)) {
-            var newStyle = style
+    // 2. Fast targeted selector for inline styles (avoids scanning every single DOM node)
+    var styledEls = root.querySelectorAll ? root.querySelectorAll('[style*="249,"], [style*="250,"], [style*="251,"], [style*="252,"], [style*="255, 107"], [style*="#f9"], [style*="#fb"], [style*="#ff6b"]') : [];
+    for (var i = 0; i < styledEls.length; i++) {
+        var el = styledEls[i];
+        var st = el.getAttribute('style');
+        if (st) {
+            el.setAttribute('style', st
                 .replace(/rgb\(252,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
                 .replace(/rgb\(251,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
                 .replace(/rgb\(249,\s*86,\s*47\)/g, 'rgb(37, 99, 235)')
@@ -551,56 +545,35 @@ function recolorOrangeElements(root) {
                 .replace(/rgba\(255,\s*107,\s*53/g, 'rgba(37, 99, 235')
                 .replace(/#f9562f/gi, '#2563EB')
                 .replace(/#fbb168/gi, '#60A5FA')
-                .replace(/#ff6b35/gi, '#2563EB');
-            el.setAttribute('style', newStyle);
-        }
-
-        // Check SVG attributes
-        ['fill', 'stroke', 'color'].forEach(function(attr) {
-            if (el.hasAttribute(attr)) {
-                var val = el.getAttribute(attr);
-                if (isOrangeColorStr(val)) {
-                    var newVal = val
-                        .replace(/rgb\(252,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
-                        .replace(/rgb\(251,\s*177,\s*104\)/g, 'rgb(96, 165, 250)')
-                        .replace(/rgb\(249,\s*86,\s*47\)/g, 'rgb(37, 99, 235)')
-                        .replace(/rgb\(250,\s*87,\s*48\)/g, 'rgb(37, 99, 235)')
-                        .replace(/#f9562f/gi, '#2563EB')
-                        .replace(/#fbb168/gi, '#60A5FA')
-                        .replace(/#ff6b35/gi, '#2563EB');
-                    el.setAttribute(attr, newVal);
-                }
-            }
-        });
-
-        // Check computed styles for active text, badges, dots
-        if (el.tagName === 'P' || el.tagName === 'SPAN' || el.tagName === 'DIV' || el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3') {
-            try {
-                var comp = window.getComputedStyle(el);
-                if (comp && isOrangeColorStr(comp.color)) {
-                    el.style.setProperty('color', '#60A5FA', 'important');
-                }
-                if (comp && isOrangeColorStr(comp.backgroundColor)) {
-                    el.style.setProperty('background-color', '#2563EB', 'important');
-                }
-                if (comp && isOrangeColorStr(comp.borderColor)) {
-                    el.style.setProperty('border-color', '#2563EB', 'important');
-                }
-            } catch(e) {}
+                .replace(/#ff6b35/gi, '#2563EB')
+            );
         }
     }
 }
 
+let purgeScheduled = false;
+function schedulePurge() {
+    if (purgeScheduled) return;
+    purgeScheduled = true;
+    requestAnimationFrame(() => {
+        purgeScheduled = false;
+        purgeUnwanted();
+    });
+}
+
 function initObserver() {
     const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(processNode);
-                purgeUnwanted();
-            } else if (mutation.type === 'characterData') {
-                processNode(mutation.target);
+        let needsProcess = false;
+        for (let i = 0; i < mutations.length; i++) {
+            const m = mutations[i];
+            if (m.addedNodes.length > 0 || m.type === 'characterData') {
+                needsProcess = true;
+                break;
             }
-        });
+        }
+        if (needsProcess) {
+            schedulePurge();
+        }
     });
 
     observer.observe(document.body, {
@@ -612,9 +585,6 @@ function initObserver() {
     // Initial pass
     processNode(document.body);
     purgeUnwanted();
-
-    // Fast polling fallback for dynamic Framer component transitions
-    setInterval(purgeUnwanted, 150);
 }
 
 if (document.readyState === 'loading') {

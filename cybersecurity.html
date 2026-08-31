@@ -83,12 +83,11 @@
       min-height: 100%;
       width: 100%;
       height: 100%;
-      transform: translate(-50%, -50%);
-      -webkit-transform: translate(-50%, -50%);
+      transform: translate3d(-50%, -50%, 0);
+      -webkit-transform: translate3d(-50%, -50%, 0);
       object-fit: cover;
       object-position: center center;
       opacity: 0.72;
-      filter: contrast(1.16) brightness(0.95) saturate(1.20);
     }
 
     .ciccada-bg-video-overlay {
@@ -1541,22 +1540,31 @@
     });
 
     const particles = [];
-    const numParticles = Math.min(Math.floor(window.innerWidth / 22), 65);
+    const numParticles = Math.min(Math.floor(window.innerWidth / 35), 35);
 
     for (let i = 0; i < numParticles; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
         radius: Math.random() * 1.2 + 0.8,
         alpha: Math.random() * 0.35 + 0.15
       });
     }
 
     let lastTime = performance.now();
+    let isTabVisible = !document.hidden;
+    document.addEventListener('visibilitychange', () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible) {
+        lastTime = performance.now();
+        requestAnimationFrame(renderCanvas);
+      }
+    });
 
     function renderCanvas(now) {
+      if (!isTabVisible) return;
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
@@ -1572,13 +1580,16 @@
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Subtle mouse attraction
-        const mDist = Math.hypot(mouse.x - p.x, mouse.y - p.y);
-        if (mDist < 160) {
+        // Mouse attraction with squared distance check
+        const mdx = mouse.x - p.x;
+        const mdy = mouse.y - p.y;
+        const mDistSq = mdx * mdx + mdy * mdy;
+        if (mDistSq < 22500 && mDistSq > 0) { // 150px
+          const mDist = Math.sqrt(mDistSq);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(37, 99, 235, ${0.25 * (1 - mDist / 160)})`;
+          ctx.strokeStyle = `rgba(37, 99, 235, ${0.25 * (1 - mDist / 150)})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
@@ -1590,12 +1601,15 @@
 
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 110) {
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 10000) { // 100px
+            const dist = Math.sqrt(distSq);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(96, 165, 250, ${0.12 * (1 - dist / 110)})`;
+            ctx.strokeStyle = `rgba(96, 165, 250, ${0.12 * (1 - dist / 100)})`;
             ctx.lineWidth = 0.6;
             ctx.stroke();
           }
@@ -1606,30 +1620,38 @@
     }
     requestAnimationFrame(renderCanvas);
 
-    // ── Mouse Parallax on Hero Mesh ──
+    // ── Mouse Parallax on Hero Mesh (Idle-optimized) ──
     const heroMesh = document.querySelector('.cc-hero-mesh-bg');
     const heroGlow = document.querySelector('.cc-hero-glow-under');
     let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+    let parallaxRunning = false;
 
     window.addEventListener('mousemove', (e) => {
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
-      targetX = (e.clientX - cx) / cx * 18;
-      targetY = (e.clientY - cy) / cy * 18;
-    });
+      targetX = (e.clientX - cx) / cx * 16;
+      targetY = (e.clientY - cy) / cy * 16;
+      if (!parallaxRunning) {
+        parallaxRunning = true;
+        requestAnimationFrame(animateMeshParallax);
+      }
+    }, { passive: true });
 
     function animateMeshParallax() {
-      currentX += (targetX - currentX) * 0.05;
-      currentY += (targetY - currentY) * 0.05;
+      currentX += (targetX - currentX) * 0.06;
+      currentY += (targetY - currentY) * 0.06;
       if (heroMesh) {
         heroMesh.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
       }
       if (heroGlow) {
-        heroGlow.style.transform = `translate3d(${currentX * 1.3}px, ${currentY * 1.3}px, 0)`;
+        heroGlow.style.transform = `translate3d(${currentX * 1.2}px, ${currentY * 1.2}px, 0)`;
       }
-      requestAnimationFrame(animateMeshParallax);
+      if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+        requestAnimationFrame(animateMeshParallax);
+      } else {
+        parallaxRunning = false;
+      }
     }
-    animateMeshParallax();
 
     // ── Live HUD Stepper Animation ──
     let activeHudStep = 3;
