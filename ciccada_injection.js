@@ -289,14 +289,14 @@ function purgeUnwanted() {
             var cyberLinkContainer = document.createElement('div');
             cyberLinkContainer.className = 'cc-nav-cyber-injected';
             cyberLinkContainer.style.cssText = 'display:flex;align-items:center;height:100%;';
-            cyberLinkContainer.innerHTML = '<a href="cybersecurity.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#f9562f\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Cybersecurity</a>';
+            cyberLinkContainer.innerHTML = '<a href="cybersecurity.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#2563EB\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Cybersecurity</a>';
             menuGroup.insertBefore(cyberLinkContainer, firstChild);
         }
         if (!menuGroup.querySelector('.cc-nav-contact-injected')) {
             var contactLinkContainer = document.createElement('div');
             contactLinkContainer.className = 'cc-nav-contact-injected';
             contactLinkContainer.style.cssText = 'display:flex;align-items:center;height:100%;';
-            contactLinkContainer.innerHTML = '<a href="contact.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#f9562f\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Contact</a>';
+            contactLinkContainer.innerHTML = '<a href="contact.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#2563EB\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Contact</a>';
             menuGroup.appendChild(contactLinkContainer);
         }
     });
@@ -390,7 +390,7 @@ if (document.readyState === 'loading') {
         '  position: absolute !important;',
         '  inset: -10% !important;',
         '  pointer-events: none !important;',
-        '  background: radial-gradient(circle at 35% 45%, rgba(249,86,47,0.32) 0%, rgba(251,177,104,0.18) 30%, rgba(0,0,0,0) 70%) !important;',
+        '  background: radial-gradient(circle at 35% 45%, rgba(37,99,235,0.32) 0%, rgba(96,165,250,0.18) 30%, rgba(0,0,0,0) 70%) !important;',
         '  filter: blur(40px) !important;',
         '  z-index: 0 !important;',
         '  animation: ccGlowPulse 8s ease-in-out infinite !important;',
@@ -401,7 +401,7 @@ if (document.readyState === 'loading') {
         '  pointer-events: none !important;',
         '  -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat !important;',
         '  mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat !important;',
-        '  background: radial-gradient(ellipse at 40% 50%, rgba(251,177,104,0.7) 0%, rgba(249,86,47,0.5) 40%, rgba(0,0,0,0) 75%) !important;',
+        '  background: radial-gradient(ellipse at 40% 50%, rgba(96,165,250,0.7) 0%, rgba(37,99,235,0.5) 40%, rgba(0,0,0,0) 75%) !important;',
         '  opacity: 0.85 !important;',
         '  z-index: 1 !important;',
         '}',
@@ -429,12 +429,12 @@ if (document.readyState === 'loading') {
         '.cct-prompt { color: rgba(255,255,255,0.55) !important; font-family: inherit !important; }',
         '.cct-cmd { color: #ffffff !important; font-weight: 500 !important; font-family: inherit !important; }',
         '.cct-arrow { color: rgba(255,255,255,0.35) !important; font-family: inherit !important; }',
-        '.cct-key { color: #fbb168 !important; font-weight: 600 !important; display: inline-block !important; width: 175px !important; font-family: inherit !important; }',
-        '.cct-val { color: #f9562f !important; font-family: inherit !important; }',
+        '.cct-key { color: #60A5FA !important; font-weight: 600 !important; display: inline-block !important; width: 175px !important; font-family: inherit !important; }',
+        '.cct-val { color: #2563EB !important; font-family: inherit !important; }',
         '.cct-cmt { color: rgba(255,255,255,0.42) !important; font-family: inherit !important; }',
         '.cct-cmt-val { color: rgba(255,255,255,0.85) !important; font-family: inherit !important; }',
-        '.cct-ok-icon { color: #4ade80 !important; font-family: inherit !important; }',
-        '.cct-ok-text { color: #4ade80 !important; font-family: inherit !important; }',
+        '.cct-ok-icon { color: #34D399 !important; font-family: inherit !important; }',
+        '.cct-ok-text { color: #34D399 !important; font-family: inherit !important; }',
         '.cct-dim { color: rgba(255,255,255,0.3) !important; font-family: inherit !important; }',
         '#cc-term-cursor {',
         '  display: inline-block !important;',

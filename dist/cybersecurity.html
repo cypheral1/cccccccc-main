@@ -16,12 +16,15 @@
       --bg-surface: #080808;
       --bg-card: rgba(10, 10, 10, 0.88);
       --border: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(249, 86, 47, 0.4);
-      --accent-orange: #f9562f;
-      --accent-amber: #fbb168;
-      --accent-green: #4ade80;
+      --border-glow: rgba(37, 99, 235, 0.4);
+      --accent-cyan: #2563EB;
+      --accent-azure: #60A5FA;
+      --accent-teal: #34D399;
+      --accent-royal: #3B82F6;
+      --accent-orange: #2563EB;
+      --accent-amber: #60A5FA;
+      --accent-green: #34D399;
       --accent-red: #ff5f57;
-      --accent-cyan: #38bdf8;
       --text-white: #ffffff;
       --text-dim: rgba(255, 255, 255, 0.65);
       --text-muted: rgba(255, 255, 255, 0.4);
@@ -190,7 +193,7 @@
       background: rgba(255, 255, 255, 0.12);
       border-color: rgba(255, 255, 255, 0.3);
       transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(249, 86, 47, 0.15);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
     }
 
     /* ── Split Hero Layout ─────────────────────────────────────── */
@@ -229,8 +232,8 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 24px;
-      background: rgba(249, 86, 47, 0.08);
-      border: 1px solid rgba(249, 86, 47, 0.25);
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.25);
       padding: 6px 14px;
       border-radius: 4px;
       width: fit-content;
@@ -259,7 +262,7 @@
       background: linear-gradient(135deg, #ffffff 30%, var(--accent-amber) 75%, var(--accent-orange) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(249, 86, 47, 0.25);
+      text-shadow: 0 0 30px rgba(37, 99, 235, 0.25);
     }
 
     .cc-hero-sub {
@@ -371,7 +374,7 @@
     .cc-hero-glow-under {
       position: absolute;
       inset: -20%;
-      background: radial-gradient(circle at 40% 50%, rgba(249, 86, 47, 1) 0%, rgba(251, 177, 104, 0.6) 28%, rgba(249, 86, 47, 0.2) 55%, transparent 75%);
+      background: radial-gradient(circle at 40% 50%, rgba(37, 99, 235, 1) 0%, rgba(96, 165, 250, 0.6) 28%, rgba(37, 99, 235, 0.2) 55%, transparent 75%);
       filter: blur(50px);
       pointer-events: none;
       z-index: 0;
@@ -396,7 +399,7 @@
     .cc-hero-mesh-tint {
       position: absolute;
       inset: -20%;
-      background: radial-gradient(circle at 40% 50%, rgba(249, 86, 47, 0.9) 0%, rgba(251, 177, 104, 0.7) 35%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle at 40% 50%, rgba(37, 99, 235, 0.9) 0%, rgba(96, 165, 250, 0.7) 35%, rgba(0, 0, 0, 0) 70%);
       mix-blend-mode: multiply;
       pointer-events: none;
       z-index: 1;
@@ -520,7 +523,7 @@
     .cc-pipe-icon.active {
       background: var(--accent-orange);
       color: #ffffff;
-      box-shadow: 0 0 14px rgba(249, 86, 47, 0.9);
+      box-shadow: 0 0 14px rgba(37, 99, 235, 0.9);
       animation: ccPulse 1.5s infinite;
     }
 
@@ -541,10 +544,10 @@
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--accent-amber);
-      background: rgba(251, 177, 104, 0.08);
+      background: rgba(96, 165, 250, 0.08);
       padding: 2px 7px;
       border-radius: 4px;
-      border: 1px solid rgba(251, 177, 104, 0.2);
+      border: 1px solid rgba(96, 165, 250, 0.2);
     }
 
     .cc-sec-hud-footer {
@@ -651,7 +654,7 @@
     .cc-terminal-bg-glow {
       position: absolute;
       inset: 40px 0 0;
-      background: radial-gradient(ellipse at 50% 50%, rgba(249, 86, 47, 0.32) 0%, rgba(251, 177, 104, 0.14) 40%, rgba(0,0,0,0) 75%);
+      background: radial-gradient(ellipse at 50% 50%, rgba(37, 99, 235, 0.32) 0%, rgba(96, 165, 250, 0.14) 40%, rgba(0,0,0,0) 75%);
       filter: blur(50px);
       z-index: 0;
       pointer-events: none;
@@ -662,7 +665,7 @@
       inset: 60px 0 0;
       -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
       mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
-      background: radial-gradient(ellipse at 50% 50%, rgba(251, 177, 104, 0.6) 0%, rgba(249, 86, 47, 0.4) 40%, rgba(0,0,0,0) 75%);
+      background: radial-gradient(ellipse at 50% 50%, rgba(96, 165, 250, 0.6) 0%, rgba(37, 99, 235, 0.4) 40%, rgba(0,0,0,0) 75%);
       opacity: 0.8;
       z-index: 1;
       pointer-events: none;
@@ -774,8 +777,8 @@
     }
 
     .cc-term-btn:hover {
-      background: rgba(249, 86, 47, 0.18);
-      border-color: rgba(249, 86, 47, 0.5);
+      background: rgba(37, 99, 235, 0.18);
+      border-color: rgba(37, 99, 235, 0.5);
       color: #ffffff;
       transform: translateY(-1px);
     }
@@ -849,14 +852,14 @@
     .cc-card:hover {
       border-color: var(--border-glow);
       transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(249, 86, 47, 0.12);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.12);
     }
 
     .cc-card-icon {
       width: 48px;
       height: 48px;
-      background: rgba(249, 86, 47, 0.1);
-      border: 1px solid rgba(249, 86, 47, 0.25);
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.25);
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -905,7 +908,7 @@
     .cc-radar-display {
       position: relative;
       height: 320px;
-      background: radial-gradient(circle at 50% 50%, rgba(249, 86, 47, 0.12) 0%, rgba(0,0,0,0.8) 70%);
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.12) 0%, rgba(0,0,0,0.8) 70%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       overflow: hidden;
@@ -919,9 +922,9 @@
       width: 280px;
       height: 280px;
       border-radius: 50%;
-      border: 1px solid rgba(249, 86, 47, 0.3);
+      border: 1px solid rgba(37, 99, 235, 0.3);
       animation: ccRadarRotate 4s linear infinite;
-      background: conic-gradient(from 0deg at 50% 50%, rgba(249, 86, 47, 0.4) 0deg, transparent 60deg, transparent 360deg);
+      background: conic-gradient(from 0deg at 50% 50%, rgba(37, 99, 235, 0.4) 0deg, transparent 60deg, transparent 360deg);
       will-change: transform;
     }
 
@@ -993,8 +996,8 @@
 
     .cc-cta-box {
       position: relative;
-      background: radial-gradient(circle at 50% 0%, rgba(249, 86, 47, 0.3) 0%, rgba(8, 8, 8, 0.95) 70%);
-      border: 1px solid rgba(249, 86, 47, 0.38);
+      background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.3) 0%, rgba(8, 8, 8, 0.95) 70%);
+      border: 1px solid rgba(37, 99, 235, 0.38);
       border-radius: 16px;
       padding: 70px 40px;
       text-align: center;
@@ -1008,7 +1011,7 @@
       inset: 0;
       -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
       mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
-      background: radial-gradient(circle at 50% 0%, rgba(251, 177, 104, 0.5), transparent 70%);
+      background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.5), transparent 70%);
       opacity: 0.6;
       pointer-events: none;
     }
@@ -1520,14 +1523,14 @@
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(249, 86, 47, ${0.25 * (1 - mDist / 160)})`;
+          ctx.strokeStyle = `rgba(37, 99, 235, ${0.25 * (1 - mDist / 160)})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(249, 86, 47, ${p.alpha})`;
+        ctx.fillStyle = `rgba(37, 99, 235, ${p.alpha})`;
         ctx.fill();
 
         for (let j = i + 1; j < particles.length; j++) {
@@ -1537,7 +1540,7 @@
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(251, 177, 104, ${0.12 * (1 - dist / 110)})`;
+            ctx.strokeStyle = `rgba(96, 165, 250, ${0.12 * (1 - dist / 110)})`;
             ctx.lineWidth = 0.6;
             ctx.stroke();
           }
@@ -1630,7 +1633,7 @@
       body.innerHTML = '';
       body.appendChild(cursor);
       status.textContent = 'SCANNING & HARDENING...';
-      status.style.color = '#fbb168';
+      status.style.color = '#60A5FA';
 
       for (let i = 0; i < SCRIPT.length; i++) {
         const item = SCRIPT[i];
@@ -1655,7 +1658,7 @@
       }
 
       status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
-      status.style.color = '#4ade80';
+      status.style.color = '#34D399';
       isTyping = false;
     }
 
@@ -1685,7 +1688,7 @@
 
       await sleep(1400);
       status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
-      status.style.color = '#4ade80';
+      status.style.color = '#34D399';
       isTyping = false;
     }
 
@@ -1702,11 +1705,11 @@
       rekeyLine.innerHTML = `<span class="cc-val-ok">[ENCLAVE RE-KEY]</span> <span class="cc-key">0x${hash}_GCM</span> <span class="cc-dim">:</span> <span class="cc-val-ok">symmetric key rotation complete</span>`;
       body.insertBefore(rekeyLine, cursor);
       status.textContent = 'ENCLAVE ROTATION SECURED';
-      status.style.color = '#38bdf8';
+      status.style.color = '#2563EB';
 
       await sleep(1200);
       status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
-      status.style.color = '#4ade80';
+      status.style.color = '#34D399';
       isTyping = false;
     }
 

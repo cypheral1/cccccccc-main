@@ -16,12 +16,15 @@
       --bg-surface: #080808;
       --bg-card: rgba(10, 10, 10, 0.88);
       --border: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(249, 86, 47, 0.4);
-      --accent-orange: #f9562f;
-      --accent-amber: #fbb168;
-      --accent-green: #4ade80;
+      --border-glow: rgba(37, 99, 235, 0.4);
+      --accent-cyan: #2563EB;
+      --accent-azure: #60A5FA;
+      --accent-teal: #34D399;
+      --accent-royal: #3B82F6;
+      --accent-orange: #2563EB;
+      --accent-amber: #60A5FA;
+      --accent-green: #34D399;
       --accent-red: #ff5f57;
-      --accent-cyan: #38bdf8;
       --text-white: #ffffff;
       --text-dim: rgba(255, 255, 255, 0.65);
       --text-muted: rgba(255, 255, 255, 0.4);
@@ -189,7 +192,7 @@
     .ct-header-glow-under {
       position: absolute;
       inset: -20%;
-      background: radial-gradient(circle at 50% 60%, rgba(249, 86, 47, 0.95) 0%, rgba(251, 177, 104, 0.55) 30%, rgba(249, 86, 47, 0.15) 55%, transparent 75%);
+      background: radial-gradient(circle at 50% 60%, rgba(37, 99, 235, 0.95) 0%, rgba(96, 165, 250, 0.55) 30%, rgba(37, 99, 235, 0.15) 55%, transparent 75%);
       filter: blur(50px);
       pointer-events: none;
       z-index: 0;
@@ -222,8 +225,8 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 24px;
-      background: rgba(249,86,47,0.08);
-      border: 1px solid rgba(249,86,47,0.25);
+      background: rgba(37, 99, 235,0.08);
+      border: 1px solid rgba(37, 99, 235,0.25);
       padding: 6px 14px;
       border-radius: 4px;
     }
@@ -356,8 +359,8 @@
     .ct-field input:focus,
     .ct-field select:focus,
     .ct-field textarea:focus {
-      border-color: rgba(249,86,47,0.5);
-      box-shadow: 0 0 0 3px rgba(249,86,47,0.1);
+      border-color: rgba(37, 99, 235,0.5);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235,0.1);
     }
 
     .ct-row {
@@ -425,8 +428,8 @@
     .ct-info-card-icon {
       width: 40px;
       height: 40px;
-      background: rgba(249,86,47,0.08);
-      border: 1px solid rgba(249,86,47,0.2);
+      background: rgba(37, 99, 235,0.08);
+      border: 1px solid rgba(37, 99, 235,0.2);
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -503,7 +506,7 @@
     .ct-workflow-glow-under {
       position: absolute;
       inset: -20%;
-      background: radial-gradient(circle at 40% 50%, rgba(249, 86, 47, 0.95) 0%, rgba(251, 177, 104, 0.55) 30%, rgba(249, 86, 47, 0.15) 55%, transparent 75%);
+      background: radial-gradient(circle at 40% 50%, rgba(37, 99, 235, 0.95) 0%, rgba(96, 165, 250, 0.55) 30%, rgba(37, 99, 235, 0.15) 55%, transparent 75%);
       filter: blur(45px);
       pointer-events: none;
       z-index: 0;
@@ -605,7 +608,7 @@
     .ct-wf-icon.active {
       background: var(--accent-orange);
       color: #ffffff;
-      box-shadow: 0 0 12px rgba(249, 86, 47, 0.8);
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.8);
       animation: ctPulse 1.5s infinite;
     }
 
@@ -1009,14 +1012,14 @@
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(249,86,47,${0.2 * (1 - mDist / 140)})`;
+          ctx.strokeStyle = `rgba(37, 99, 235,${0.2 * (1 - mDist / 140)})`;
           ctx.lineWidth = 0.7;
           ctx.stroke();
         }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(249,86,47,${p.a})`;
+        ctx.fillStyle = `rgba(37, 99, 235,${p.a})`;
         ctx.fill();
 
         for (let j = i + 1; j < particles.length; j++) {
@@ -1026,7 +1029,7 @@
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(251,177,104,${0.1 * (1 - dist / 100)})`;
+            ctx.strokeStyle = `rgba(96,165,250,${0.1 * (1 - dist / 100)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
