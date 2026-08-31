@@ -36,7 +36,7 @@ dirsToCopy.forEach(dir => {
 });
 
 // Files to copy
-const filesToCopy = ['index.html', 'ciccada_injection.js', 'cybersecurity.html', 'contact.html'];
+const filesToCopy = ['index.html', 'ciccada_injection.js', 'cybersecurity.html', 'contact.html', 'WhatsApp Video 2026-08-31 at 16.10.49.mp4'];
 filesToCopy.forEach(file => {
   const src = path.join(__dirname, file);
   const dest = path.join(distDir, file);

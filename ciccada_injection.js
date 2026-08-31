@@ -144,6 +144,58 @@ founderStyle.textContent = `
         background: linear-gradient(90deg, rgb(96, 165, 250) 0%, rgb(37, 99, 235) 100%) !important;
     }
 
+    /* ── Global Background Video for Whole Website ────────────────────── */
+    #ciccada-global-bg-video-wrap {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        min-height: -webkit-fill-available !important;
+        z-index: -9999 !important;
+        pointer-events: none !important;
+        overflow: hidden !important;
+        background-color: #030303 !important;
+        transform: translate3d(0, 0, 0) !important;
+        -webkit-transform: translate3d(0, 0, 0) !important;
+    }
+    #ciccada-global-bg-video {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-width: 100% !important;
+        min-height: 100% !important;
+        transform: translate(-50%, -50%) !important;
+        -webkit-transform: translate(-50%, -50%) !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+        opacity: 0.72 !important;
+        filter: contrast(1.16) brightness(0.95) saturate(1.20) !important;
+    }
+    #ciccada-global-bg-overlay {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: radial-gradient(circle at 50% 30%, rgba(3, 3, 3, 0.10) 0%, rgba(3, 3, 3, 0.52) 75%, #030303 100%),
+                    linear-gradient(180deg, rgba(3, 3, 3, 0.20) 0%, rgba(3, 3, 3, 0.40) 100%) !important;
+        pointer-events: none !important;
+    }
+
+    /* Make top-level page and variant containers transparent so video shines through on desktop, tablet, and mobile */
+    html, body, #main,
+    .framer-dPdoq, .framer-la4520, .framer-ut0nir, .framer-11gd0vq,
+    .framer-v-1cj6w34, .framer-v-123u50c, .framer-v-yqs1sz,
+    [data-framer-name="Desktop"], [data-framer-name="Tablet"], [data-framer-name="Phone"] {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
+
     @media (max-width: 768px) {
         /* Mobile Navbar Alignment */
         nav.framer-YTJB9, nav[data-framer-name*="Phone"], nav[data-framer-name*="Tablet"] {
@@ -218,6 +270,77 @@ if (document.head) {
 } else {
     document.addEventListener('DOMContentLoaded', () => document.head.appendChild(founderStyle));
 }
+
+// Background video loop element creation
+(function initBackgroundVideo() {
+    function injectVideo() {
+        if (document.getElementById('ciccada-global-bg-video-wrap')) return;
+        
+        const wrap = document.createElement('div');
+        wrap.id = 'ciccada-global-bg-video-wrap';
+        wrap.setAttribute('aria-hidden', 'true');
+        
+        const video = document.createElement('video');
+        video.id = 'ciccada-global-bg-video';
+        video.setAttribute('autoplay', '');
+        video.setAttribute('loop', '');
+        video.muted = true;
+        video.defaultMuted = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('preload', 'auto');
+        
+        const src1 = document.createElement('source');
+        src1.src = 'images/background-video.mp4';
+        src1.type = 'video/mp4';
+        
+        const src2 = document.createElement('source');
+        src2.src = 'WhatsApp%20Video%202026-08-31%20at%2016.10.49.mp4';
+        src2.type = 'video/mp4';
+
+        const src3 = document.createElement('source');
+        src3.src = '/images/background-video.mp4';
+        src3.type = 'video/mp4';
+
+        video.appendChild(src1);
+        video.appendChild(src2);
+        video.appendChild(src3);
+        
+        const overlay = document.createElement('div');
+        overlay.id = 'ciccada-global-bg-overlay';
+        
+        wrap.appendChild(video);
+        wrap.appendChild(overlay);
+        
+        if (document.body) {
+            document.body.prepend(wrap);
+        } else {
+            document.documentElement.appendChild(wrap);
+        }
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                const triggerPlay = () => {
+                    video.play().catch(() => {});
+                    window.removeEventListener('click', triggerPlay);
+                    window.removeEventListener('scroll', triggerPlay);
+                    window.removeEventListener('touchstart', triggerPlay);
+                };
+                window.addEventListener('click', triggerPlay, { once: true });
+                window.addEventListener('scroll', triggerPlay, { once: true });
+                window.addEventListener('touchstart', triggerPlay, { once: true });
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectVideo);
+    } else {
+        injectVideo();
+    }
+})();
 
 // Fix browser tab title permanently (prevent React router from changing it back)
 try {
