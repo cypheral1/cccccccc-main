@@ -282,6 +282,32 @@ function purgeUnwanted() {
         }
     });
 
+    // Inject Cybersecurity and Contact links into Navbar Menu Groups
+    document.querySelectorAll('[data-framer-name="Menu Group"], .framer-rajhn7').forEach(function(menuGroup) {
+        if (!menuGroup.querySelector('.cc-nav-cyber-injected')) {
+            var firstChild = menuGroup.firstElementChild;
+            var cyberLinkContainer = document.createElement('div');
+            cyberLinkContainer.className = 'cc-nav-cyber-injected';
+            cyberLinkContainer.style.cssText = 'display:flex;align-items:center;height:100%;';
+            cyberLinkContainer.innerHTML = '<a href="cybersecurity.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#f9562f\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Cybersecurity</a>';
+            menuGroup.insertBefore(cyberLinkContainer, firstChild);
+        }
+        if (!menuGroup.querySelector('.cc-nav-contact-injected')) {
+            var contactLinkContainer = document.createElement('div');
+            contactLinkContainer.className = 'cc-nav-contact-injected';
+            contactLinkContainer.style.cssText = 'display:flex;align-items:center;height:100%;';
+            contactLinkContainer.innerHTML = '<a href="contact.html" style="font-family:inherit;font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;display:flex;align-items:center;height:100%;padding:0 10px;transition:color 0.2s ease;" onmouseover="this.style.color=\'#f9562f\'" onmouseout="this.style.color=\'rgba(255,255,255,0.85)\'">Contact</a>';
+            menuGroup.appendChild(contactLinkContainer);
+        }
+    });
+
+    // Ensure all CTA buttons link to contact.html
+    document.querySelectorAll('a[href*="cal.com"], a[href*="calendly"], a[href="#contact"], a[data-framer-name="CTA Button"]').forEach(function(btn) {
+        if (!btn.getAttribute('href') || btn.getAttribute('href').includes('cal.com') || btn.getAttribute('href') === '#contact') {
+            btn.setAttribute('href', 'contact.html');
+        }
+    });
+
     // Remove "Design & Developed by Amani" text and sanitize any missed Lumora text
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     while (walker.nextNode()) {
@@ -373,8 +399,8 @@ if (document.readyState === 'loading') {
         '  position: absolute !important;',
         '  inset: 0 !important;',
         '  pointer-events: none !important;',
-        '  -webkit-mask: url(https://framerusercontent.com/images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp?scale-down-to=1024&width=675&height=1200) 50%/cover no-repeat !important;',
-        '  mask: url(https://framerusercontent.com/images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp?scale-down-to=1024&width=675&height=1200) 50%/cover no-repeat !important;',
+        '  -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat !important;',
+        '  mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat !important;',
         '  background: radial-gradient(ellipse at 40% 50%, rgba(251,177,104,0.7) 0%, rgba(249,86,47,0.5) 40%, rgba(0,0,0,0) 75%) !important;',
         '  opacity: 0.85 !important;',
         '  z-index: 1 !important;',

@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity &amp; Autonomous Device Defense — Ciccada Tech</title>
+  <meta name="description" content="Zero-Trust Device Security, automated threat defense, and real-time kernel telemetry by Ciccada Technology.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #030303;
+      --bg-surface: #080808;
+      --bg-card: rgba(10, 10, 10, 0.88);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(249, 86, 47, 0.4);
+      --accent-orange: #f9562f;
+      --accent-amber: #fbb168;
+      --accent-green: #4ade80;
+      --accent-red: #ff5f57;
+      --accent-cyan: #38bdf8;
+      --text-white: #ffffff;
+      --text-dim: rgba(255, 255, 255, 0.65);
+      --text-muted: rgba(255, 255, 255, 0.4);
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Plus Jakarta Sans', var(--font-sans);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text-white);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ── Canvas Background & Scanlines ─────────────────────────── */
+    #cyber-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+
+    .cc-grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cc-scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.2;
+    }
+
+    /* ── Header & Navbar ───────────────────────────────────────── */
+    .cc-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: rgba(3, 3, 3, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      transform: translateZ(0);
+    }
+
+    .cc-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .cc-nav-logo {
+      display: flex;
+      align-items: center;
+      height: 24px;
+    }
+
+    .cc-nav-logo img {
+      height: 22px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .cc-nav-divider {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 14px;
+    }
+
+    .cc-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .cc-nav-link {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-dim);
+      transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .cc-nav-link:hover {
+      color: var(--text-white);
+    }
+
+    .cc-nav-link.active {
+      color: var(--text-white);
+      font-weight: 600;
+    }
+
+    .cc-nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-orange);
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--accent-orange);
+    }
+
+    .cc-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-white);
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cc-nav-cta:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(249, 86, 47, 0.15);
+    }
+
+    /* ── Split Hero Layout ─────────────────────────────────────── */
+    .cc-hero-wrapper {
+      position: relative;
+      padding-top: 72px;
+      border-bottom: 1px solid var(--border);
+      z-index: 1;
+    }
+
+    .cc-hero-container {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      min-height: 640px;
+    }
+
+    .cc-hero-left {
+      padding: 80px 60px 80px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .cc-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-orange);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      background: rgba(249, 86, 47, 0.08);
+      border: 1px solid rgba(249, 86, 47, 0.25);
+      padding: 6px 14px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .cc-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange);
+      animation: ccPulse 2s infinite ease-in-out;
+    }
+
+    .cc-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 4.6vw, 60px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      margin-bottom: 24px;
+    }
+
+    .cc-hero-title span.glow {
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-amber) 75%, var(--accent-orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(249, 86, 47, 0.25);
+    }
+
+    .cc-hero-sub {
+      font-size: 15.5px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 540px;
+      margin-bottom: 36px;
+    }
+
+    .cc-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .cc-hero-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #ffffff;
+      color: #000000;
+      padding: 13px 22px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      width: fit-content;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 25px rgba(255, 255, 255, 0.18);
+    }
+
+    .cc-hero-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 35px rgba(255, 255, 255, 0.35);
+    }
+
+    .cc-hero-cta-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 10px;
+      border-left: 1px solid rgba(0, 0, 0, 0.15);
+      color: #000000;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .cc-hero-btn-alt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-white);
+      padding: 13px 22px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cc-hero-btn-alt:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .cc-live-cert-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .cc-live-cert-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cc-cert-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+
+    /* Hero Right: Dynamic Mesh + Live Cyber HUD Card */
+    .cc-hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 40px;
+      overflow: hidden;
+      min-height: 520px;
+    }
+
+    .cc-hero-glow-under {
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 40% 50%, rgba(249, 86, 47, 1) 0%, rgba(251, 177, 104, 0.6) 28%, rgba(249, 86, 47, 0.2) 55%, transparent 75%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+      animation: ccGlowPulseUnder 7s ease-in-out infinite alternate;
+      will-change: transform, opacity;
+    }
+
+    .cc-hero-mesh-bg {
+      position: absolute;
+      inset: -20%;
+      background-image: url('images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp');
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: screen;
+      opacity: 0.95;
+      pointer-events: none;
+      z-index: 1;
+      animation: ccMeshFloat 10s ease-in-out infinite alternate;
+      will-change: transform, filter;
+    }
+
+    .cc-hero-mesh-tint {
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 40% 50%, rgba(249, 86, 47, 0.9) 0%, rgba(251, 177, 104, 0.7) 35%, rgba(0, 0, 0, 0) 70%);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cc-sec-hud-card {
+      position: relative;
+      z-index: 2;
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 26px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transform: translateZ(0);
+    }
+
+    .cc-sec-hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .cc-sec-hud-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cc-sec-hud-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-green);
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cc-sec-hud-pill::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+
+    .cc-sec-pipeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .cc-sec-pipeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 12px;
+      bottom: 12px;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      z-index: 0;
+    }
+
+    .cc-pipe-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cc-pipe-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .cc-pipe-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cc-pipe-icon.ok {
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .cc-pipe-icon.active {
+      background: var(--accent-orange);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(249, 86, 47, 0.9);
+      animation: ccPulse 1.5s infinite;
+    }
+
+    .cc-pipe-icon.pending {
+      background: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .cc-pipe-icon.pending::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .cc-pipe-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-amber);
+      background: rgba(251, 177, 104, 0.08);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(251, 177, 104, 0.2);
+    }
+
+    .cc-sec-hud-footer {
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cc-hud-ticker {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .cc-orange-sq {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-orange);
+      display: inline-block;
+      flex-shrink: 0;
+      animation: ccPulse 1.8s infinite ease-in-out;
+    }
+
+    /* ── Dedicated Cybersecurity Metrics Row ───────────────────── */
+    .cc-hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--border);
+      max-width: 1380px;
+      margin: 0 auto;
+      background: rgba(5, 5, 5, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    .cc-hero-metric {
+      padding: 32px 36px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .cc-hero-metric:last-child {
+      border-right: none;
+    }
+
+    .cc-hm-val {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .cc-hm-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-family: var(--font-sans);
+    }
+
+    /* ── Diagonal Hazard Stripes Banner ───────────────────────── */
+    .cc-stripes-banner {
+      height: 48px;
+      border-bottom: 1px solid var(--border);
+      background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1.5px, transparent 1.5px, transparent 14px);
+      background-size: 20px 20px;
+    }
+
+    /* ── Interactive Device Security Terminal Section ─────────── */
+    .cc-terminal-section {
+      position: relative;
+      max-width: 1000px;
+      margin: 100px auto 120px;
+      padding: 0 24px;
+      z-index: 1;
+    }
+
+    .cc-terminal-section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .cc-terminal-section-title h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .cc-terminal-section-title p {
+      color: var(--text-dim);
+      font-size: 15.5px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .cc-terminal-bg-glow {
+      position: absolute;
+      inset: 40px 0 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(249, 86, 47, 0.32) 0%, rgba(251, 177, 104, 0.14) 40%, rgba(0,0,0,0) 75%);
+      filter: blur(50px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cc-terminal-mesh {
+      position: absolute;
+      inset: 60px 0 0;
+      -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
+      mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
+      background: radial-gradient(ellipse at 50% 50%, rgba(251, 177, 104, 0.6) 0%, rgba(249, 86, 47, 0.4) 40%, rgba(0,0,0,0) 75%);
+      opacity: 0.8;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .cc-terminal-box {
+      position: relative;
+      z-index: 2;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 28px 32px 32px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 30px 90px rgba(0, 0, 0, 0.96);
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.85;
+      min-height: 400px;
+    }
+
+    .cc-terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .cc-terminal-traffic {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .cc-traffic-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .cc-traffic-red { background: #ff5f57; }
+    .cc-traffic-yellow { background: #febc2e; }
+    .cc-traffic-green { background: #28c840; }
+
+    .cc-terminal-tag {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.5px;
+    }
+
+    .cc-terminal-body {
+      display: block;
+      min-height: 250px;
+    }
+
+    .cc-line {
+      display: block;
+      min-height: 26px;
+      line-height: 26px;
+      white-space: pre;
+      font-family: inherit;
+      animation: ccLineFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .cc-prompt { color: rgba(255, 255, 255, 0.5); }
+    .cc-cmd { color: #ffffff; font-weight: 600; }
+    .cc-arrow { color: rgba(255, 255, 255, 0.35); }
+    .cc-key { color: var(--accent-amber); font-weight: 600; display: inline-block; width: 195px; }
+    .cc-val { color: var(--accent-orange); }
+    .cc-val-threat { color: #ff4d4d; font-weight: 700; }
+    .cc-val-ok { color: var(--accent-green); font-weight: 600; }
+    .cc-cmt { color: rgba(255, 255, 255, 0.42); }
+    .cc-dim { color: rgba(255, 255, 255, 0.3); }
+
+    .cc-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.85);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: ccBlink 1s step-end infinite;
+    }
+
+    .cc-terminal-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .cc-term-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.85);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cc-term-btn:hover {
+      background: rgba(249, 86, 47, 0.18);
+      border-color: rgba(249, 86, 47, 0.5);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .cc-term-status {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s ease;
+    }
+
+    .cc-term-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    /* ── Security Pillars Grid ─────────────────────────────────── */
+    .cc-section {
+      max-width: 1280px;
+      margin: 0 auto 130px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .cc-section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .cc-section-sub {
+      color: var(--text-dim);
+      font-size: 16px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cc-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .cc-card {
+      background: rgba(12, 12, 12, 0.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 34px 28px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    .cc-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(249, 86, 47, 0.12);
+    }
+
+    .cc-card-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(249, 86, 47, 0.1);
+      border: 1px solid rgba(249, 86, 47, 0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-orange);
+      margin-bottom: 22px;
+    }
+
+    .cc-card-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cc-card-title {
+      font-size: 19px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      margin-bottom: 12px;
+      color: var(--text-white);
+    }
+
+    .cc-card-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    /* ── Threat Simulation Showcase ────────────────────────────── */
+    .cc-threat-radar-wrap {
+      background: rgba(10, 10, 10, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 120px;
+    }
+
+    .cc-radar-display {
+      position: relative;
+      height: 320px;
+      background: radial-gradient(circle at 50% 50%, rgba(249, 86, 47, 0.12) 0%, rgba(0,0,0,0.8) 70%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cc-radar-sweep {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(249, 86, 47, 0.3);
+      animation: ccRadarRotate 4s linear infinite;
+      background: conic-gradient(from 0deg at 50% 50%, rgba(249, 86, 47, 0.4) 0deg, transparent 60deg, transparent 360deg);
+      will-change: transform;
+    }
+
+    .cc-radar-center-blip {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      box-shadow: 0 0 14px var(--accent-orange);
+      position: absolute;
+      z-index: 2;
+    }
+
+    .cc-radar-blip {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: ccPulse 2s infinite;
+    }
+
+    .cc-threat-content h3 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .cc-threat-content p {
+      color: var(--text-dim);
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .cc-threat-stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .cc-threat-stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      transition: background 0.25s ease;
+    }
+
+    .cc-threat-stat-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* ── CTA Banner ────────────────────────────────────────────── */
+    .cc-cta-wrap {
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto 130px;
+      padding: 0 24px;
+      z-index: 1;
+    }
+
+    .cc-cta-box {
+      position: relative;
+      background: radial-gradient(circle at 50% 0%, rgba(249, 86, 47, 0.3) 0%, rgba(8, 8, 8, 0.95) 70%);
+      border: 1px solid rgba(249, 86, 47, 0.38);
+      border-radius: 16px;
+      padding: 70px 40px;
+      text-align: center;
+      overflow: hidden;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+    }
+
+    .cc-cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      -webkit-mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
+      mask: url(images/ZFHV04yVksSmFJ5vj7yOYrL4fo.webp) 50%/cover no-repeat;
+      background: radial-gradient(circle at 50% 0%, rgba(251, 177, 104, 0.5), transparent 70%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .cc-cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4.5vw, 48px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-cta-sub {
+      color: var(--text-dim);
+      font-size: 16px;
+      max-width: 540px;
+      margin: 0 auto 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    .cc-footer {
+      border-top: 1px solid var(--border);
+      padding: 60px 40px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cc-footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cc-footer-copy {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .cc-footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .cc-footer-links a:hover {
+      color: #ffffff;
+    }
+
+    /* ── Keyframe Animations ───────────────────────────────────── */
+    @keyframes ccBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes ccPulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
+    @keyframes ccRadarRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes ccLineFade { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    @keyframes ccMeshFloat {
+      0% {
+        transform: scale(1.05) translate3d(0, 0, 0) rotate(0deg);
+        filter: brightness(1) contrast(1.1);
+      }
+      25% {
+        transform: scale(1.15) translate3d(-3%, -2%, 0) rotate(1.2deg);
+        filter: brightness(1.2) contrast(1.25);
+      }
+      50% {
+        transform: scale(1.08) translate3d(2%, -4%, 0) rotate(-1.5deg);
+        filter: brightness(1.3) contrast(1.15);
+      }
+      75% {
+        transform: scale(1.16) translate3d(-2%, 3%, 0) rotate(1.8deg);
+        filter: brightness(1.15) contrast(1.2);
+      }
+      100% {
+        transform: scale(1.05) translate3d(0, 0, 0) rotate(0deg);
+        filter: brightness(1) contrast(1.1);
+      }
+    }
+
+    @keyframes ccGlowPulseUnder {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+        opacity: 0.8;
+      }
+      33% {
+        transform: scale(1.18) translate3d(-4%, 3%, 0);
+        opacity: 1;
+      }
+      66% {
+        transform: scale(1.12) translate3d(3%, -4%, 0);
+        opacity: 0.9;
+      }
+      100% {
+        transform: scale(1) translate3d(0, 0, 0);
+        opacity: 0.8;
+      }
+    }
+
+    /* ── Mobile Responsive Rules ───────────────────────────────── */
+    @media (max-width: 960px) {
+      .cc-navbar {
+        padding: 0 20px;
+        height: 64px;
+      }
+      .cc-nav-divider, .cc-nav-links {
+        display: none;
+      }
+      .cc-hero-container {
+        grid-template-columns: 1fr;
+      }
+      .cc-hero-left {
+        padding: 40px 24px 30px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .cc-hero-right {
+        padding: 40px 20px;
+        min-height: 440px;
+      }
+      .cc-hero-metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .cc-hero-metric:nth-child(2) {
+        border-right: none;
+      }
+      .cc-threat-radar-wrap {
+        grid-template-columns: 1fr;
+        padding: 24px;
+      }
+      .cc-terminal-box {
+        padding: 20px 16px;
+        font-size: 11.5px;
+      }
+      .cc-line {
+        min-height: 22px;
+        line-height: 22px;
+        font-size: 11.5px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .cc-key {
+        width: 130px;
+        font-size: 11.5px;
+      }
+      .cc-footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .cc-footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Cyber Particle Canvas -->
+  <canvas id="cyber-canvas"></canvas>
+  <div class="cc-grid-overlay"></div>
+  <div class="cc-scanline"></div>
+
+  <!-- Navigation Bar -->
+  <header class="cc-navbar">
+    <div class="cc-nav-left">
+      <a href="./" class="cc-nav-logo" title="Ciccada Tech Home">
+        <img src="images/ciccada_logo.svg" alt="Ciccada Tech">
+      </a>
+      <span class="cc-nav-divider">/</span>
+      <ul class="cc-nav-links">
+        <li><a href="cybersecurity.html" class="cc-nav-link active">Cybersecurity</a></li>
+        <li><a href="./#solution" class="cc-nav-link">Solutions</a></li>
+        <li><a href="./#case-study" class="cc-nav-link">Case Study</a></li>
+        <li><a href="./#pricing" class="cc-nav-link">Pricing</a></li>
+        <li><a href="contact.html" class="cc-nav-link">Contact</a></li>
+      </ul>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="contact.html" class="cc-nav-cta">Request Demo →</a>
+    </div>
+  </header>
+
+  <!-- Bespoke Cybersecurity Split Hero Section -->
+  <section class="cc-hero-wrapper">
+    <div class="cc-hero-container">
+      
+      <!-- Left Content: Cybersecurity Focus -->
+      <div class="cc-hero-left">
+        <div class="cc-hero-badge">
+          <span class="cc-pulse-dot"></span>
+          <span>AUTONOMOUS ENDPOINT DEFENSE — V2.4 ONLINE</span>
+        </div>
+
+        <h1 class="cc-hero-title">
+          Zero-Trust Device Defense.<br>
+          <span class="glow">Real-Time Threat Isolation.</span>
+        </h1>
+
+        <p class="cc-hero-sub">
+          Continuous kernel-level observability and autonomous incident containment. Stop zero-days, unauthorized socket execution, and credential exfiltration before they breach your perimeter.
+        </p>
+
+        <div class="cc-hero-actions">
+          <a href="#terminal-demo" class="cc-hero-cta-btn">
+            <span>Run Device Audit</span>
+            <span class="cc-hero-cta-arrow">⋯→</span>
+          </a>
+          <a href="contact.html" class="cc-hero-btn-alt">
+            <span>Schedule Threat Review →</span>
+          </a>
+        </div>
+
+        <div class="cc-live-cert-row">
+          <div class="cc-live-cert-item">
+            <span class="cc-cert-dot"></span>
+            <span>eBPF KERNEL ENFORCED</span>
+          </div>
+          <div class="cc-live-cert-item">
+            <span class="cc-cert-dot"></span>
+            <span>SOC2 / ISO27001 COMPLIANT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Content: Mesh + Live Security Workflow Card -->
+      <div class="cc-hero-right">
+        <div class="cc-hero-glow-under"></div>
+        <div class="cc-hero-mesh-bg"></div>
+
+        <div class="cc-sec-hud-card" id="workflow-card">
+          <div class="cc-sec-hud-header">
+            <div class="cc-sec-hud-title">
+              <span>WORKFLOW — RUNNING</span>
+            </div>
+          </div>
+
+          <div class="cc-sec-pipeline" id="hud-pipeline">
+            <div class="cc-pipe-row" id="hud-step-1">
+              <div class="cc-pipe-left">
+                <span class="cc-pipe-icon ok">✓</span>
+                <span class="cc-pipe-label">Trigger: Log Ingest</span>
+              </div>
+            </div>
+
+            <div class="cc-pipe-row" id="hud-step-2">
+              <div class="cc-pipe-left">
+                <span class="cc-pipe-icon ok">✓</span>
+                <span class="cc-pipe-label">Stateful Processing</span>
+              </div>
+            </div>
+
+            <div class="cc-pipe-row" id="hud-step-3">
+              <div class="cc-pipe-left">
+                <span class="cc-pipe-icon ok">✓</span>
+                <span class="cc-pipe-label">Stream Routing</span>
+              </div>
+            </div>
+
+            <div class="cc-pipe-row" id="hud-step-4">
+              <div class="cc-pipe-left">
+                <span class="cc-pipe-icon active">●</span>
+                <span class="cc-pipe-label" style="color: rgba(255,255,255,0.65);">Anomaly Scoring</span>
+              </div>
+            </div>
+
+            <div class="cc-pipe-row" id="hud-step-5">
+              <div class="cc-pipe-left">
+                <span class="cc-pipe-icon pending"></span>
+                <span class="cc-pipe-label" style="color: rgba(255,255,255,0.45);">Alert to Dashboard</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cc-sec-hud-footer">
+            <div class="cc-hud-ticker">
+              <span class="cc-orange-sq"></span>
+              <span>Running 24/7. So your team can focus on what closes.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4-Column Dedicated Cybersecurity Metrics -->
+    <div class="cc-hero-metrics">
+      <div class="cc-hero-metric">
+        <div class="cc-hm-val">99.99%</div>
+        <div class="cc-hm-label">Threat Intercept Rate</div>
+      </div>
+      <div class="cc-hero-metric">
+        <div class="cc-hm-val">&lt;0.8ms</div>
+        <div class="cc-hm-label">Containment Latency</div>
+      </div>
+      <div class="cc-hero-metric">
+        <div class="cc-hm-val">0-Day</div>
+        <div class="cc-hm-label">Immunity Guarantee</div>
+      </div>
+      <div class="cc-hero-metric">
+        <div class="cc-hm-val">48M+</div>
+        <div class="cc-hm-label">Daily Audited Syscalls</div>
+      </div>
+    </div>
+
+    <!-- Diagonal Hazard Stripes Banner -->
+    <div class="cc-stripes-banner"></div>
+  </section>
+
+  <!-- Interactive Terminal Simulation -->
+  <section class="cc-terminal-section" id="terminal-demo">
+    <div class="cc-terminal-section-title">
+      <h2>Autonomous Device Defense Simulation</h2>
+      <p>Watch Ciccada's kernel eBPF engine detect and isolate live intrusion vectors in sub-millisecond real time.</p>
+    </div>
+
+    <div class="cc-terminal-bg-glow"></div>
+    <div class="cc-terminal-mesh"></div>
+    
+    <div class="cc-terminal-box">
+      <div class="cc-terminal-header">
+        <div class="cc-terminal-traffic">
+          <span class="cc-traffic-dot cc-traffic-red"></span>
+          <span class="cc-traffic-dot cc-traffic-yellow"></span>
+          <span class="cc-traffic-dot cc-traffic-green"></span>
+        </div>
+        <span class="cc-terminal-tag">bash — ciccada-secops [ENDPOINT_PRIMARY]</span>
+      </div>
+
+      <div class="cc-terminal-body" id="sec-term-body"></div>
+      <span class="cc-cursor" id="sec-term-cursor"></span>
+
+      <div class="cc-terminal-controls">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="cc-term-btn" onclick="restartTerminalScan()">[re-scan]</button>
+          <button class="cc-term-btn" onclick="simulateThreat()">[intrusion-sim]</button>
+          <button class="cc-term-btn" onclick="lockEnclave()">[force-rekey]</button>
+        </div>
+        <span class="cc-term-status" id="sec-term-status">ACTIVE ENCLAVE POSTURE: SECURE</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Threat Radar Section -->
+  <section class="cc-section">
+    <div class="cc-threat-radar-wrap">
+      <div class="cc-radar-display">
+        <div class="cc-radar-sweep"></div>
+        <div class="cc-radar-center-blip"></div>
+        <div class="cc-radar-blip" style="top: 35%; left: 68%;"></div>
+        <div class="cc-radar-blip" style="top: 70%; left: 30%; animation-delay: 0.8s;"></div>
+        <div class="cc-radar-blip" style="top: 25%; left: 25%; animation-delay: 1.4s;"></div>
+      </div>
+
+      <div class="cc-threat-content">
+        <h3>Autonomous Fleet Radar</h3>
+        <p>Continuous heuristic analysis triangulates unauthorized memory access patterns, suspicious TCP sockets, and modified system binaries across 10,000+ endpoints in real time.</p>
+        
+        <div class="cc-threat-stats-list">
+          <div class="cc-threat-stat-item">
+            <span style="color:var(--text-dim);">Live Monitored Endpoints</span>
+            <span style="color:var(--text-white); font-weight:700;">8,429 / 8,429</span>
+          </div>
+          <div class="cc-threat-stat-item">
+            <span style="color:var(--text-dim);">Zero-Day Quarantine Velocity</span>
+            <span style="color:var(--accent-green); font-weight:700;">0.38ms [Instant]</span>
+          </div>
+          <div class="cc-threat-stat-item">
+            <span style="color:var(--text-dim);">Cryptographic Integrity State</span>
+            <span style="color:var(--accent-amber); font-weight:700;">AES-256-GCM Locked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Pillars Grid -->
+  <section class="cc-section">
+    <div class="cc-section-header">
+      <h2 class="cc-section-title">Engineered for Zero-Compromise Security</h2>
+      <p class="cc-section-sub">Comprehensive defense across the hardware, kernel, network, and application layers.</p>
+    </div>
+
+    <div class="cc-grid-4">
+      <div class="cc-card">
+        <div class="cc-card-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h3 class="cc-card-title">Kernel eBPF Telemetry</h3>
+        <p class="cc-card-desc">Deep observability into every syscall, socket spawn, and memory mutation with sub-0.1% CPU overhead.</p>
+      </div>
+
+      <div class="cc-card">
+        <div class="cc-card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3 class="cc-card-title">Sub-Millisecond Isolation</h3>
+        <p class="cc-card-desc">Instantaneous process killing, socket severance, and memory freezing before malicious payloads propagate.</p>
+      </div>
+
+      <div class="cc-card">
+        <div class="cc-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <h3 class="cc-card-title">Ephemeral Zero-Trust Enclaves</h3>
+        <p class="cc-card-desc">Dynamic mutual TLS handshakes and automated token revocation on anomalous device posture changes.</p>
+      </div>
+
+      <div class="cc-card">
+        <div class="cc-card-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3 class="cc-card-title">Immutable SIEM Stream</h3>
+        <p class="cc-card-desc">Cryptographically signed forensic event logs routed directly to your SOC dashboard with zero data loss.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cc-cta-wrap">
+    <div class="cc-cta-box">
+      <h2 class="cc-cta-title">Ready to secure your fleet?</h2>
+      <p class="cc-cta-sub">Deploy Ciccada Tech's automated device defense and eliminate threat vectors in your infrastructure.</p>
+      <a href="contact.html" class="cc-nav-cta" style="background:#ffffff; color:#000000; padding: 14px 28px; font-size: 14px;">Schedule Security Audit →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="cc-footer">
+    <div class="cc-footer-left">
+      <img src="images/ciccada_logo.svg" alt="Ciccada Tech" style="height: 20px; width: auto; object-fit: contain;">
+      <span class="cc-footer-copy">© 2026 Ciccada Technology. All rights reserved.</span>
+    </div>
+    <ul class="cc-footer-links">
+      <li><a href="./">Home</a></li>
+      <li><a href="cybersecurity.html">Cybersecurity</a></li>
+      <li><a href="./#solution">Solutions</a></li>
+      <li><a href="./#pricing">Pricing</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </footer>
+
+  <!-- Scripts: 60/120 FPS High-DPI Canvas & Smooth Interactive Terminal -->
+  <script>
+    // ── High-DPI Smooth Particle Canvas ──
+    const canvas = document.getElementById('cyber-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dpr;
+
+    function resizeCanvas() {
+      dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    let mouse = { x: -1000, y: -1000 };
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+
+    const particles = [];
+    const numParticles = Math.min(Math.floor(window.innerWidth / 22), 65);
+
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        radius: Math.random() * 1.2 + 0.8,
+        alpha: Math.random() * 0.35 + 0.15
+      });
+    }
+
+    let lastTime = performance.now();
+
+    function renderCanvas(now) {
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx * 60 * dt;
+        p.y += p.vy * 60 * dt;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Subtle mouse attraction
+        const mDist = Math.hypot(mouse.x - p.x, mouse.y - p.y);
+        if (mDist < 160) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(249, 86, 47, ${0.25 * (1 - mDist / 160)})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(249, 86, 47, ${p.alpha})`;
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 110) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(251, 177, 104, ${0.12 * (1 - dist / 110)})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(renderCanvas);
+    }
+    requestAnimationFrame(renderCanvas);
+
+    // ── Mouse Parallax on Hero Mesh ──
+    const heroMesh = document.querySelector('.cc-hero-mesh-bg');
+    const heroGlow = document.querySelector('.cc-hero-glow-under');
+    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      targetX = (e.clientX - cx) / cx * 18;
+      targetY = (e.clientY - cy) / cy * 18;
+    });
+
+    function animateMeshParallax() {
+      currentX += (targetX - currentX) * 0.05;
+      currentY += (targetY - currentY) * 0.05;
+      if (heroMesh) {
+        heroMesh.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+      }
+      if (heroGlow) {
+        heroGlow.style.transform = `translate3d(${currentX * 1.3}px, ${currentY * 1.3}px, 0)`;
+      }
+      requestAnimationFrame(animateMeshParallax);
+    }
+    animateMeshParallax();
+
+    // ── Live HUD Stepper Animation ──
+    let activeHudStep = 3;
+    const hudRows = document.querySelectorAll('#hud-pipeline .cc-pipe-row');
+
+    setInterval(() => {
+      activeHudStep = (activeHudStep + 1) % hudRows.length;
+      hudRows.forEach((row, idx) => {
+        const icon = row.querySelector('.cc-pipe-icon');
+        const label = row.querySelector('.cc-pipe-label');
+        if (idx === activeHudStep) {
+          icon.className = 'cc-pipe-icon active';
+          icon.textContent = '●';
+          if (label) label.style.color = '#ffffff';
+        } else if (idx < activeHudStep) {
+          icon.className = 'cc-pipe-icon ok';
+          icon.textContent = '✓';
+          if (label) label.style.color = 'rgba(255,255,255,0.9)';
+        } else {
+          icon.className = 'cc-pipe-icon pending';
+          icon.textContent = '';
+          if (label) label.style.color = 'rgba(255,255,255,0.45)';
+        }
+      });
+    }, 2400);
+
+    // ── Terminal Simulator ──
+    const SCRIPT = [
+      { segs: [{ t: '$ ', c: 'cc-prompt' }, { t: 'ciccada.secops --device=endpoint-01 --audit --deep', c: 'cc-cmd' }], pause: 550 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'kernel_telemetry', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: 'eBPF probes active [RingBuffer OK]', c: 'cc-val' }], pause: 220 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'memory_regions', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: '16GB VRAM analyzed [clean]', c: 'cc-val' }], pause: 220 },
+      { segs: [{ t: '! ', c: 'cc-val-threat' }, { t: 'ANOMALY DETECTED', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: 'outbound socket 198.51.100.23:4444 [PID 8492]', c: 'cc-val-threat' }], pause: 380 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'quarantine_exec', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: 'isolated PID 8492 [SIGKILL dispatched]', c: 'cc-val-ok' }], pause: 280 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'nftables_guard', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: '198.51.100.23 added to ingress blocklist', c: 'cc-val-ok' }], pause: 280 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'token_revocation', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: '3 compromised TLS sessions invalidated', c: 'cc-val-ok' }], pause: 320 },
+      { segs: [{ t: '→ ', c: 'cc-arrow' }, { t: 'enclave_handshake', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: 'ephemeral AES-256-GCM enclave locked', c: 'cc-val-ok' }], pause: 360 },
+      { segs: [{ t: '✓ ', c: 'cc-val-ok' }, { t: 'DEVICE POSTURE', c: 'cc-key' }, { t: ': ', c: 'cc-dim' }, { t: 'HARDENED (100% Zero-Trust Compliant)', c: 'cc-val-ok' }], pause: 2500 }
+    ];
+
+    let isTyping = false;
+    let scanTimeout = null;
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    async function runSecurityTerminal() {
+      if (isTyping) return;
+      isTyping = true;
+
+      const body = document.getElementById('sec-term-body');
+      const cursor = document.getElementById('sec-term-cursor');
+      const status = document.getElementById('sec-term-status');
+      if (!body || !cursor) return;
+
+      body.innerHTML = '';
+      body.appendChild(cursor);
+      status.textContent = 'SCANNING & HARDENING...';
+      status.style.color = '#fbb168';
+
+      for (let i = 0; i < SCRIPT.length; i++) {
+        const item = SCRIPT[i];
+        const line = document.createElement('div');
+        line.className = 'cc-line';
+        body.insertBefore(line, cursor);
+
+        if (item.segs && item.segs.length > 0) {
+          for (let s = 0; s < item.segs.length; s++) {
+            const seg = item.segs[s];
+            const span = document.createElement('span');
+            span.className = seg.c;
+            line.appendChild(span);
+
+            for (let c = 0; c < seg.t.length; c++) {
+              span.textContent += seg.t[c];
+              await sleep(15);
+            }
+          }
+        }
+        await sleep(item.pause);
+      }
+
+      status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
+      status.style.color = '#4ade80';
+      isTyping = false;
+    }
+
+    function restartTerminalScan() {
+      if (scanTimeout) clearTimeout(scanTimeout);
+      isTyping = false;
+      const termEl = document.getElementById('terminal-demo');
+      if (termEl) {
+        termEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      runSecurityTerminal();
+    }
+
+    async function simulateThreat() {
+      if (isTyping) return;
+      isTyping = true;
+      const body = document.getElementById('sec-term-body');
+      const cursor = document.getElementById('sec-term-cursor');
+      const status = document.getElementById('sec-term-status');
+      
+      const threatLine = document.createElement('div');
+      threatLine.className = 'cc-line';
+      threatLine.innerHTML = '<span class="cc-val-threat">!! INTRUSION DETECTED:</span> <span class="cc-key">c2_heartbeat</span> <span class="cc-dim">:</span> <span class="cc-val-threat">blocked in 0.38ms via automated quarantine</span>';
+      body.insertBefore(threatLine, cursor);
+      status.textContent = 'THREAT INSTANTANEOUSLY NEUTRALIZED';
+      status.style.color = '#ff5f57';
+
+      await sleep(1400);
+      status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
+      status.style.color = '#4ade80';
+      isTyping = false;
+    }
+
+    async function lockEnclave() {
+      if (isTyping) return;
+      isTyping = true;
+      const body = document.getElementById('sec-term-body');
+      const cursor = document.getElementById('sec-term-cursor');
+      const status = document.getElementById('sec-term-status');
+      
+      const hash = Math.random().toString(36).substring(2, 10).toUpperCase();
+      const rekeyLine = document.createElement('div');
+      rekeyLine.className = 'cc-line';
+      rekeyLine.innerHTML = `<span class="cc-val-ok">[ENCLAVE RE-KEY]</span> <span class="cc-key">0x${hash}_GCM</span> <span class="cc-dim">:</span> <span class="cc-val-ok">symmetric key rotation complete</span>`;
+      body.insertBefore(rekeyLine, cursor);
+      status.textContent = 'ENCLAVE ROTATION SECURED';
+      status.style.color = '#38bdf8';
+
+      await sleep(1200);
+      status.textContent = 'ACTIVE ENCLAVE POSTURE: SECURE (100%)';
+      status.style.color = '#4ade80';
+      isTyping = false;
+    }
+
+    // Reliable auto-run on load or when terminal scrolls into view
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', () => { setTimeout(runSecurityTerminal, 300); });
+    } else {
+      setTimeout(runSecurityTerminal, 300);
+    }
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !isTyping) {
+            const body = document.getElementById('sec-term-body');
+            if (body && body.children.length <= 1) {
+              runSecurityTerminal();
+            }
+          }
+        });
+      }, { threshold: 0.2 });
+
+      const termEl = document.getElementById('terminal-demo');
+      if (termEl) observer.observe(termEl);
+    }
+  </script>
+</body>
+</html>
