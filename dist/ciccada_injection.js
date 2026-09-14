@@ -37,8 +37,9 @@ const textReplacements = {
     "Score & qualify lead": "Stream Routing",
     "Route to sales team": "Anomaly Scoring",
     "Log activity to CRM": "Alert to Dashboard",
-    "Design & Developed by Amani": "Ciccada Technology",
     "Noda Patel": "Sameer Chavan",
+    "Noda": "Sameer",
+    "Patel": "Chavan",
     "AI Consultant & Builder": "AI Machine Learning Engineer",
     "AI Consultant &amp; Builder": "AI Machine Learning Engineer",
     "Founder & Security Engineer": "AI Machine Learning Engineer",
@@ -53,20 +54,31 @@ const textReplacements = {
 // Inject alignment styles for founder image
 const founderStyle = document.createElement('style');
 founderStyle.textContent = `
+    .framer-s4z3dm {
+        padding: 0 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: stretch !important;
+    }
     .framer-s4z3dm img[alt="BG"] {
         display: none !important;
     }
-    .framer-s4z3dm {
-        overflow: hidden !important;
+    .framer-napdvs {
         position: relative !important;
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1 0 auto !important;
+        min-height: 520px !important;
+        overflow: hidden !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    .framer-napdvs, 
     .framer-napdvs > div {
         position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
+        inset: 0 !important;
         width: 100% !important;
         height: 100% !important;
     }
@@ -74,13 +86,92 @@ founderStyle.textContent = `
         object-fit: cover !important;
         object-position: center top !important;
         width: 100% !important;
-        height: 108% !important;
+        height: 100% !important;
+        display: block !important;
+        transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out !important;
     }
     .framer-1kwnnws {
         position: absolute !important;
-        bottom: 24px !important;
-        left: 24px !important;
+        bottom: 30px !important;
+        left: 30px !important;
+        right: 30px !important;
         z-index: 10 !important;
+        transition: opacity 0.3s ease-in-out !important;
+    }
+    .framer-n58wfx, .framer-n58wfx p, .framer-n58wfx span {
+        font-family: inherit !important;
+        font-size: 20px !important;
+        font-weight: 600 !important;
+        color: #FFFFFF !important;
+        line-height: 1.3 !important;
+        letter-spacing: -0.01em !important;
+        margin: 0 !important;
+        opacity: 1 !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.85) !important;
+        display: block !important;
+    }
+    .framer-1a2pj88, .framer-1a2pj88 p, .framer-1a2pj88 span {
+        font-family: inherit !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        color: rgba(255, 255, 255, 0.75) !important;
+        line-height: 1.4 !important;
+        margin: 4px 0 0 0 !important;
+        opacity: 1 !important;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.8) !important;
+        display: block !important;
+    }
+    .cc-founder-indicators {
+        display: flex !important;
+        gap: 8px !important;
+        align-items: center !important;
+        margin-top: 10px !important;
+        z-index: 15 !important;
+    }
+    .cc-founder-pill {
+        height: 4px !important;
+        width: 20px !important;
+        border-radius: 99px !important;
+        background: rgba(255, 255, 255, 0.35) !important;
+        cursor: pointer !important;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        display: inline-block !important;
+    }
+    .cc-founder-pill.active {
+        background: #2563EB !important;
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.7) !important;
+        width: 36px !important;
+    }
+    /* Founder Right Side Content White Typography */
+    .framer-1wt86gx h2, #about .framer-1wa5lai h2, #about h2 {
+        color: #FFFFFF !important;
+        --framer-text-color: #FFFFFF !important;
+    }
+    .framer-1wt86gx p, #about .framer-1j0efcu p {
+        color: rgba(255, 255, 255, 0.75) !important;
+        --framer-text-color: rgba(255, 255, 255, 0.75) !important;
+    }
+    .framer-4cfybo, .framer-4cfybo p, .framer-4cfybo span {
+        color: #FFFFFF !important;
+        --framer-text-color: #FFFFFF !important;
+        font-family: inherit !important;
+        font-weight: 600 !important;
+    }
+    .framer-1wg9uxg, .framer-1wg9uxg p, .framer-1wg9uxg span {
+        color: rgba(255, 255, 255, 0.75) !important;
+        --framer-text-color: rgba(255, 255, 255, 0.75) !important;
+        font-family: inherit !important;
+        font-weight: 400 !important;
+    }
+    /* Hide Pricing Section and Pricing Navigation Links */
+    #pricing, 
+    .framer-q6rr1i, 
+    [data-framer-name="Pricing Section"],
+    .framer-jxuew0-container,
+    a[href*="pricing"],
+    .framer-2fvd61-container,
+    .framer-1udoqmf {
+        display: none !important;
     }
     .framer-1qymy5r {
         width: 120px !important;
@@ -174,10 +265,10 @@ founderStyle.textContent = `
         height: 100% !important;
         min-width: 100% !important;
         min-height: 100% !important;
-        transform: translate3d(-50%, -50%, 0) !important;
-        -webkit-transform: translate3d(-50%, -50%, 0) !important;
+        transform: translate3d(-50%, -50%, 0) scale(1.15) !important;
+        -webkit-transform: translate3d(-50%, -50%, 0) scale(1.15) !important;
         object-fit: cover !important;
-        object-position: center center !important;
+        object-position: 55% 42% !important;
         opacity: 0.72 !important;
         will-change: auto !important;
     }
@@ -231,27 +322,14 @@ founderStyle.textContent = `
         }
 
         /* Founder Card Mobile Fit */
-        .framer-s4z3dm {
-            min-height: 380px !important;
+        .framer-napdvs {
             border-radius: 12px !important;
-            max-width: calc(100vw - 32px) !important;
-            margin: 0 auto !important;
-        }
-        .framer-napdvs img {
-            object-fit: cover !important;
-            object-position: center 15% !important;
         }
         .framer-1kwnnws {
             position: absolute !important;
-            bottom: 16px !important;
-            left: 16px !important;
+            bottom: 20px !important;
+            left: 20px !important;
             z-index: 10 !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            background: rgba(0, 0, 0, 0.65) !important;
-            padding: 10px 14px !important;
-            border-radius: 8px !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
 
         /* Problem Section Container */
@@ -410,6 +488,187 @@ function processNode(node) {
     }
 }
 
+// ── Team / Founder Card Carousel ───────────────────────────────────────────
+const teamMembers = [
+    {
+        name: "Sameer Chavan",
+        role: "AI Machine Learning Engineer",
+        tag: "THE FOUNDER",
+        headline: "Part strategist. Part builder. Fully accountable.",
+        bio: "As an AI & Machine Learning Engineer, I design and deploy intelligent models, automated pipelines, and mission-critical systems.",
+        statVal: "Young Founder",
+        statDesc: "Building scalable AI and Machine Learning systems",
+        photo: "images/sameer_chavan.png",
+        photoPos: "center top"
+    },
+    {
+        name: "Shubham Mane",
+        role: "Co-Founder",
+        tag: "THE CO-FOUNDER",
+        headline: "Scaling cybersecurity architecture & intelligence.",
+        bio: "As Co-Founder, I drive product strategy, platform engineering, and high-performance cybersecurity architectures for enterprise teams.",
+        statVal: "Co-Founder",
+        statDesc: "Architecting high-scale security & automation pipelines",
+        photo: "images/shubham_mane.png",
+        photoPos: "center top"
+    }
+];
+
+let activeFounderIndex = 0;
+let founderAutoTimer = null;
+let isHoveringAbout = false;
+
+// Preload team photos
+(function preloadTeamImages() {
+    teamMembers.forEach(function(member) {
+        var img = new Image();
+        img.src = member.photo;
+    });
+})();
+
+function applyActiveFounder(index, animate) {
+    const member = teamMembers[index];
+    if (!member) return;
+
+    const imgs = document.querySelectorAll('.framer-napdvs img, img[alt="Founder Image"]');
+    const titleGroups = document.querySelectorAll('.framer-1kwnnws');
+    const nameContainers = document.querySelectorAll('.framer-n58wfx');
+    const roleContainers = document.querySelectorAll('.framer-1a2pj88');
+    const tags = document.querySelectorAll('#about .framer-xh01ze-container p, .framer-xh01ze-container p');
+    const headlines = document.querySelectorAll('#about .framer-1wa5lai h2, .framer-1wa5lai h2, #about h2');
+    const bios = document.querySelectorAll('#about .framer-1j0efcu p, .framer-1j0efcu p');
+    const statVals = document.querySelectorAll('#about .framer-r1ag1e-container .framer-4cfybo, .framer-r1ag1e-container .framer-4cfybo');
+    const statDescs = document.querySelectorAll('#about .framer-r1ag1e-container .framer-1wg9uxg, .framer-r1ag1e-container .framer-1wg9uxg');
+    const stat2Vals = document.querySelectorAll('#about .framer-h0fztx-container .framer-4cfybo, .framer-h0fztx-container .framer-4cfybo');
+    const stat2Descs = document.querySelectorAll('#about .framer-h0fztx-container .framer-1wg9uxg, .framer-h0fztx-container .framer-1wg9uxg');
+
+    function updateDOM() {
+        imgs.forEach(function(img) {
+            if (img.getAttribute('src') !== member.photo) {
+                img.src = member.photo;
+                img.removeAttribute('srcset');
+            }
+            img.style.objectPosition = member.photoPos;
+        });
+
+        nameContainers.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1vwjlqs" style="font-size:20px !important;font-weight:600 !important;color:#FFFFFF !important;line-height:1.3 !important;letter-spacing:-0.01em !important;margin:0 !important;text-shadow:0 2px 10px rgba(0,0,0,0.85);display:block !important;">' + member.name + '</p>';
+        });
+
+        roleContainers.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1weeuw0" style="font-size:14px !important;font-weight:400 !important;color:rgba(255,255,255,0.75) !important;line-height:1.4 !important;margin:4px 0 0 0 !important;text-shadow:0 2px 8px rgba(0,0,0,0.8);display:block !important;">' + member.role + '</p>';
+        });
+
+        tags.forEach(function(el) {
+            el.innerHTML = '<span style="color: rgb(37, 99, 235); font-weight: 500; letter-spacing: 0.06em;">::: ' + member.tag + '</span>';
+        });
+
+        headlines.forEach(function(el) {
+            el.style.color = '#FFFFFF';
+            el.textContent = member.headline;
+        });
+
+        bios.forEach(function(el) {
+            el.style.color = 'rgba(255, 255, 255, 0.75)';
+            el.textContent = member.bio;
+        });
+
+        statVals.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1bt7n2p" style="color:#FFFFFF !important;--framer-text-color:#FFFFFF !important;font-size:20px !important;font-weight:600 !important;line-height:1.3 !important;margin:0 !important;display:block !important;">' + member.statVal + '</p>';
+        });
+
+        statDescs.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1weeuw0" style="color:rgba(255,255,255,0.75) !important;--framer-text-color:rgba(255,255,255,0.75) !important;font-size:14px !important;font-weight:400 !important;line-height:1.4 !important;margin:4px 0 0 0 !important;display:block !important;">' + member.statDesc + '</p>';
+        });
+
+        stat2Vals.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1bt7n2p" style="color:#FFFFFF !important;--framer-text-color:#FFFFFF !important;font-size:20px !important;font-weight:600 !important;line-height:1.3 !important;margin:0 !important;display:block !important;">120+</p>';
+        });
+
+        stat2Descs.forEach(function(el) {
+            el.innerHTML = '<p class="framer-text framer-styles-preset-1weeuw0" style="color:rgba(255,255,255,0.75) !important;--framer-text-color:rgba(255,255,255,0.75) !important;font-size:14px !important;font-weight:400 !important;line-height:1.4 !important;margin:4px 0 0 0 !important;display:block !important;">Workflows built across 38 companies worldwide</p>';
+        });
+
+        updateFounderIndicators(index);
+    }
+
+    if (animate) {
+        imgs.forEach(function(img) { img.style.opacity = '0.3'; img.style.transform = 'scale(0.98)'; });
+        titleGroups.forEach(function(tg) { tg.style.opacity = '0.3'; });
+        headlines.forEach(function(h) { h.style.opacity = '0.3'; });
+        bios.forEach(function(b) { b.style.opacity = '0.3'; });
+
+        setTimeout(function() {
+            updateDOM();
+            imgs.forEach(function(img) { img.style.opacity = '1'; img.style.transform = 'scale(1)'; });
+            titleGroups.forEach(function(tg) { tg.style.opacity = '1'; });
+            headlines.forEach(function(h) { h.style.opacity = '1'; });
+            bios.forEach(function(b) { b.style.opacity = '1'; });
+        }, 160);
+    } else {
+        updateDOM();
+        imgs.forEach(function(img) { img.style.opacity = '1'; });
+    }
+}
+
+function updateFounderIndicators(activeIndex) {
+    document.querySelectorAll('.cc-founder-indicators').forEach(function(wrap) {
+        var pills = wrap.querySelectorAll('.cc-founder-pill');
+        pills.forEach(function(pill, idx) {
+            if (idx === activeIndex) {
+                pill.classList.add('active');
+            } else {
+                pill.classList.remove('active');
+            }
+        });
+    });
+}
+
+function injectFounderIndicators() {
+    document.querySelectorAll('.framer-1kwnnws').forEach(function(titleGroup) {
+        if (!titleGroup.querySelector('.cc-founder-indicators')) {
+            var indWrap = document.createElement('div');
+            indWrap.className = 'cc-founder-indicators';
+            indWrap.innerHTML = '<span class="cc-founder-pill ' + (activeFounderIndex === 0 ? 'active' : '') + '" data-index="0" title="Sameer Chavan — Founder"></span>' +
+                                '<span class="cc-founder-pill ' + (activeFounderIndex === 1 ? 'active' : '') + '" data-index="1" title="Shubham Mane — Co-Founder"></span>';
+            indWrap.querySelectorAll('.cc-founder-pill').forEach(function(p) {
+                p.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var targetIdx = parseInt(p.getAttribute('data-index'), 10);
+                    if (targetIdx !== activeFounderIndex) {
+                        activeFounderIndex = targetIdx;
+                        applyActiveFounder(activeFounderIndex, true);
+                    }
+                });
+            });
+            titleGroup.appendChild(indWrap);
+        }
+    });
+
+    // Attach hover listeners to pause rotation when user is reading
+    document.querySelectorAll('#about, .framer-t05o1y').forEach(function(sec) {
+        if (!sec.__ccHoverAttached) {
+            sec.__ccHoverAttached = true;
+            sec.addEventListener('mouseenter', function() {
+                isHoveringAbout = true;
+            });
+            sec.addEventListener('mouseleave', function() {
+                isHoveringAbout = false;
+            });
+        }
+    });
+}
+
+function startFounderAutoRotation() {
+    if (founderAutoTimer) clearInterval(founderAutoTimer);
+    founderAutoTimer = setInterval(function() {
+        if (!isHoveringAbout) {
+            activeFounderIndex = (activeFounderIndex + 1) % teamMembers.length;
+            applyActiveFounder(activeFounderIndex, true);
+        }
+    }, 2800);
+}
+
 // 2. Remove Framer promo badge & Amani credit
 function purgeUnwanted() {
     // Remove the Framer badge container (AgentLab AI / Use for Free / Made in Framer)
@@ -427,13 +686,14 @@ function purgeUnwanted() {
         if (z > 2147000000) el.remove();
     });
 
-    // Replace Founder image with Sameer Chavan's photo
-    document.querySelectorAll('img[src*="19VQ8lou0fXJZWptw2sdg9sw"], img[alt="Founder Image"]').forEach(function(img) {
-        if (!img.src.includes('sameer_chavan.png')) {
-            img.src = 'images/sameer_chavan.png';
-            img.removeAttribute('srcset');
-        }
+    // Remove the entire Pricing Section and Pricing nav/footer items
+    document.querySelectorAll('#pricing, .framer-q6rr1i, [data-framer-name="Pricing Section"], .framer-jxuew0-container, a[href*="pricing"]').forEach(function(el) {
+        el.remove();
     });
+
+    // Team / Founder Carousel Logic
+    applyActiveFounder(activeFounderIndex, false);
+    injectFounderIndicators();
 
     // Replace Lumora Logo SVG with Ciccada Tech Logo SVG (including mobile navs)
     document.querySelectorAll('img[src*="iecljx2VuDSHgMWYnaVAorc4"], .framer-s0n0kj img, nav img[src*="svg"]').forEach(function(img) {
@@ -469,7 +729,7 @@ function purgeUnwanted() {
         }
     });
 
-    // Remove "Design & Developed by Amani" text and sanitize any missed Lumora text
+    // Remove "Design & Developed by Amani" text and sanitize any missed Lumora or Noda Patel text
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     while (walker.nextNode()) {
         var node = walker.currentNode;
@@ -483,6 +743,12 @@ function purgeUnwanted() {
                 }
                 parent = parent.parentElement;
             }
+        }
+
+        if (node.nodeValue && /Noda\s*Patel/gi.test(node.nodeValue)) {
+            node.nodeValue = node.nodeValue.replace(/Noda\s*Patel/gi, 'Sameer Chavan');
+        } else if (node.nodeValue && /Noda/gi.test(node.nodeValue)) {
+            node.nodeValue = node.nodeValue.replace(/Noda/gi, 'Sameer');
         }
 
         if (node.nodeValue && /lumora/gi.test(node.nodeValue)) {
@@ -560,6 +826,7 @@ function schedulePurge() {
     purgeScheduled = true;
     requestAnimationFrame(() => {
         purgeScheduled = false;
+        processNode(document.body);
         purgeUnwanted();
     });
 }
@@ -585,9 +852,19 @@ function initObserver() {
         characterData: true
     });
     
-    // Initial pass
+    // Initial passes
     processNode(document.body);
     purgeUnwanted();
+    startFounderAutoRotation();
+
+    // Periodic safety passes during hydration
+    var checkCount = 0;
+    var interval = setInterval(function() {
+        processNode(document.body);
+        purgeUnwanted();
+        checkCount++;
+        if (checkCount > 30) clearInterval(interval);
+    }, 200);
 }
 
 if (document.readyState === 'loading') {
